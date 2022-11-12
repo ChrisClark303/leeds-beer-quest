@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/LeedsBeerQuest/.vs
+/LeedsBeerQuest/LeedsBeerQuest.Api/bin/Debug/net7.0
+/LeedsBeerQuest/LeedsBeerQuest.Api/obj
+/LeedsBeerQuest/LeedsBeerQuest.Tests/bin/Debug/net7.0
+/LeedsBeerQuest/LeedsBeerQuest.Tests/obj
