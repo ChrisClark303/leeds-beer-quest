@@ -14,7 +14,6 @@ namespace LeedsBeerQuest.Api
                 [] => Array.Empty<BeerEstablishment>(),
                 [var columns, .. var dataRows] => ParseDataRows(columns, dataRows)
             };
-            //return ParseDataRows(allRows.First(), allRows.Skip(1).ToArray());
         }
 
         private BeerEstablishment[] ParseDataRows(string columnHeaders, params string[] rows)

@@ -1,6 +1,4 @@
-﻿using LeedsBeerQuest.Api.Models;
-using Microsoft.Extensions.Caching.Memory;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace LeedsBeerQuest.Api
@@ -20,27 +18,18 @@ namespace LeedsBeerQuest.Api
 
         public async Task Import()
         {
-            var csvData = await _dataImportClient.GetAsync("leedsbeerquest.csv");
-            var dataString = await csvData.Content.ReadAsStringAsync();
+            string dataString = await GetBeerQuestData();
 
             var data = _dataParser.Parse(dataString);
 
             _dataManagementService.ImportData(data);
         }
-    }
 
-    public class InMemoryDataManagementService : IDataManagementService
-    {
-        private readonly IMemoryCache _memCache;
-
-        public InMemoryDataManagementService(IMemoryCache memCache)
+        private async Task<string> GetBeerQuestData()
         {
-            _memCache = memCache;
-        }
-
-        public void ImportData(BeerEstablishment[] establishments)
-        {
-            _memCache.Set("establishments", establishments, TimeSpan.FromDays(7));
+            var csvData = await _dataImportClient.GetAsync("leedsbeerquest.csv");
+            var dataString = await csvData.Content.ReadAsStringAsync();
+            return dataString;
         }
     }
 }
