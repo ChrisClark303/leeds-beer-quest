@@ -18,20 +18,31 @@ namespace LeedsBeerQuest.Api
             _settings = settings.Value;
         }
 
-        public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation)
+        public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation = default)
         {
-            //get objects from cache
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");
             if (establishments == null)
             {
                 return Array.Empty<BeerEstablishmentLocation>();
             }
-            //convert to the right model
-            var locations = establishments.Select(e => new BeerEstablishmentLocation() { Name = e.Name, Location = e.Location });
-            //order by distance
-            //page
 
-            return locations.Take(10).ToArray();
+            var locations = CreateLocationModel(myLocation, establishments!);
+            return locations
+                .OrderBy(l => l.Distance)
+                .Take(_settings.DefaultPageSize)
+                .ToArray();
+        }
+
+        private IEnumerable<BeerEstablishmentLocation> CreateLocationModel(Location myLocation, BeerEstablishment[] establishments)
+        {
+            var startLocation = myLocation.Equals(default(Location)) ? _settings.DefaultSearchLocation : myLocation;
+            var locations = establishments.Select(e => new BeerEstablishmentLocation()
+                { 
+                    Name = e.Name, 
+                    Location = e.Location, 
+                    Distance = _distanceCalculator.CalculateDistanceInMiles(startLocation, e.Location) 
+                });
+            return locations;
         }
     }
 }

@@ -2,8 +2,8 @@
 {
     public class BeerEstablishmentLocation
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public Location Location { get; set; }
-        public decimal Distance { get; set; }
+        public double Distance { get; set; }
     }
 }
