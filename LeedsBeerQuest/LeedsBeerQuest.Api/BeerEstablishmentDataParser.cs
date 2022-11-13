@@ -8,7 +8,7 @@ namespace LeedsBeerQuest.Api
         private string[] _columns;
         public BeerEstablishment[] Parse(string data)
         {
-            string[] allRows = data.Split("\r\n");
+            string[] allRows = data.TrimEnd('\n').TrimEnd('\r').Split("\r\n");
             return allRows switch
             {
                 [] => Array.Empty<BeerEstablishment>(),
@@ -41,8 +41,8 @@ namespace LeedsBeerQuest.Api
                 Thumbnail = new Uri(GetValueForField("thumbnail", rowData)),
                 Location = new Location
                 {
-                    Lat = Decimal.Parse(GetValueForField("lat", rowData)),
-                    Long = Decimal.Parse(GetValueForField("lng", rowData))
+                    Lat = Double.Parse(GetValueForField("lat", rowData)),
+                    Long = Double.Parse(GetValueForField("lng", rowData))
                 },
                 Address = GetValueForField("address", rowData),
                 Phone = GetValueForField("phone", rowData),

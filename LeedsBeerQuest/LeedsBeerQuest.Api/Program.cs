@@ -1,20 +1,16 @@
 using LeedsBeerQuest.Api;
+using LeedsBeerQuest.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<DataImporter>();
-builder.Services.AddHttpClient<DataImporter>(client =>
-{
-    //TODO : Needs to come from config!!
-    client.BaseAddress = new Uri("https://datamillnorth.org/download/leeds-beer-quest/c8884f6c-84a0-4a54-9c71-c5016bf4d878/");
-});
+builder.Services.AddServices(builder.Configuration);
+builder.Services.AddConfig(builder.Configuration);
 
 var app = builder.Build();
 
@@ -27,12 +23,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.MapControllers();
 app.MapGet("/data-management/import", async ([FromServices] DataImporter importer) =>
 {
     await importer.Import();
+});
+app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService beerService) =>
+{
+    //need to gather the location somehow!!
+    return await beerService.GetNearestBeerLocations(new Location());
 });
 
 app.Run();
