@@ -1,8 +1,11 @@
-<google-map>
+<google-map height="600px" width="800px" [center]="center">
     <map-marker
+    #somemarker="mapMarker"
     *ngFor="let marker of markers"
     [position]="marker.position"
     [label]="marker.label"
     [title]="marker.title"
-    [options]="marker.options"></map-marker>
+    [options]="marker.options"
+    (mapClick)="showMarkerInformation(somemarker, marker.info)"></map-marker>
+    <map-info-window>{{infoContent}}</map-info-window>
 </google-map>

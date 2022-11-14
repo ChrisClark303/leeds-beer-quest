@@ -23,6 +23,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyHeader();
+    options.AllowAnyMethod();
+});
+
 app.MapControllers();
 app.MapGet("/data-management/import", async ([FromServices] DataImporter importer) =>
 {
