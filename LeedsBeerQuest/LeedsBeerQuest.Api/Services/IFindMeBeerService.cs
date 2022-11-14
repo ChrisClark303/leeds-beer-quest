@@ -1,6 +1,6 @@
 ﻿using LeedsBeerQuest.Api.Models;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.Api.Services
 {
     public interface IFindMeBeerService
     {
@@ -40,13 +40,13 @@ namespace LeedsBeerQuest.Api
 
             double c = 2 * Math.Asin(Math.Sqrt(a));
 
-            return Math.Round((c * _radiusOfEarthInMiles), 3);
+            return Math.Round(c * _radiusOfEarthInMiles, 3);
         }
 
         static double toRadians(double angleIn10thofaDegree)
         {
             // Angle in 10th of a degree
-            return (angleIn10thofaDegree * Math.PI) / 180;
+            return angleIn10thofaDegree * Math.PI / 180;
         }
     }
 }

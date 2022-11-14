@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using LeedsBeerQuest.Api.Services;
 
 namespace LeedsBeerQuest.Api
 {
@@ -19,9 +20,7 @@ namespace LeedsBeerQuest.Api
         public async Task Import()
         {
             string dataString = await GetBeerQuestData();
-
             var data = _dataParser.Parse(dataString);
-
             _dataManagementService.ImportData(data);
         }
 

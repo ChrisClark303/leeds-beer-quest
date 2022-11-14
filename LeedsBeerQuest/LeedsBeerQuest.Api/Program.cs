@@ -1,5 +1,6 @@
 using LeedsBeerQuest.Api;
 using LeedsBeerQuest.Api.Models;
+using LeedsBeerQuest.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 

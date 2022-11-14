@@ -3,7 +3,7 @@ using LeedsBeerQuest.Api.Settings;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.Api.Services
 {
     public class FindMeBeerService : IFindMeBeerService
     {
@@ -37,11 +37,11 @@ namespace LeedsBeerQuest.Api
         {
             var startLocation = myLocation.Equals(default(Location)) ? _settings.DefaultSearchLocation : myLocation;
             var locations = establishments.Select(e => new BeerEstablishmentLocation()
-                { 
-                    Name = e.Name, 
-                    Location = e.Location, 
-                    Distance = _distanceCalculator.CalculateDistanceInMiles(startLocation, e.Location) 
-                });
+            {
+                Name = e.Name,
+                Location = e.Location,
+                Distance = _distanceCalculator.CalculateDistanceInMiles(startLocation, e.Location)
+            });
             return locations;
         }
     }

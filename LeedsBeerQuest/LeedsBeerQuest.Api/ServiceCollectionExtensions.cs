@@ -1,4 +1,5 @@
-﻿using LeedsBeerQuest.Api.Settings;
+﻿using LeedsBeerQuest.Api.Services;
+using LeedsBeerQuest.Api.Settings;
 using Microsoft.Extensions.Caching.Memory;
 using System.Runtime.CompilerServices;
 

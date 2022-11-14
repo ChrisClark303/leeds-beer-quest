@@ -40,18 +40,18 @@ namespace LeedsBeerQuest.Api
                 Thumbnail = new Uri(GetValueForField("thumbnail", rowData)),
                 Location = new Location
                 {
-                    Lat = Double.Parse(GetValueForField("lat", rowData)),
-                    Long = Double.Parse(GetValueForField("lng", rowData))
+                    Lat = GetDoubleValueForField("lat", rowData),
+                    Long = GetDoubleValueForField("lng", rowData)
                 },
                 Address = GetValueForField("address", rowData),
                 Phone = GetValueForField("phone", rowData),
                 Twitter = GetValueForField("twitter", rowData),
                 Ratings = new EstablishmentRatings
                 {
-                    Beer = Decimal.Parse(GetValueForField("stars_beer", rowData)),
-                    Atmosphere = Decimal.Parse(GetValueForField("stars_atmosphere", rowData)),
-                    Amenities = Decimal.Parse(GetValueForField("stars_amenities", rowData)),
-                    Value = Decimal.Parse(GetValueForField("stars_value", rowData))
+                    Beer = GetDoubleValueForField("stars_beer", rowData),
+                    Atmosphere = GetDoubleValueForField("stars_atmosphere", rowData),
+                    Amenities = GetDoubleValueForField("stars_amenities", rowData),
+                    Value = GetDoubleValueForField("stars_value", rowData)
                 },
                 Tags = GetValueForField("tags", rowData).Split(',')
             };
@@ -66,6 +66,11 @@ namespace LeedsBeerQuest.Api
             }
 
             return rowData[index].Trim('\"');
+        }
+
+        private Double GetDoubleValueForField(string fieldName, string[] rowData)
+        {
+            return Double.Parse(GetValueForField(fieldName, rowData));
         }
 
         private int GetPositionForField(string fieldName)

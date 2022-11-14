@@ -1,7 +1,7 @@
 ﻿using LeedsBeerQuest.Api.Models;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.Api.Services
 {
     public class InMemoryDataManagementService : IDataManagementService
     {

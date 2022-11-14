@@ -2,9 +2,9 @@
 {
     public struct EstablishmentRatings
     {
-        public decimal Beer { get; set; }
-        public decimal Atmosphere { get; set; }
-        public decimal Amenities { get; set; }
-        public decimal Value { get; set; }
+        public double Beer { get; set; }
+        public double Atmosphere { get; set; }
+        public double Amenities { get; set; }
+        public double Value { get; set; }
     }
 }

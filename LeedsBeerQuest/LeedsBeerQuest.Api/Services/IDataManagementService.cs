@@ -1,6 +1,6 @@
 ﻿using LeedsBeerQuest.Api.Models;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.Api.Services
 {
     public interface IDataManagementService
     {
