@@ -66,7 +66,7 @@ namespace LeedsBeerQuest.Api
                 return string.Empty;
             }
 
-            return rowData[index].Trim('\"');
+            return rowData[index].Trim('\"',' ');
         }
 
         private Double GetDoubleValueForField(string fieldName, string[] rowData)
