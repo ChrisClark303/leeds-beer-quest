@@ -1,4 +1,5 @@
 ﻿using LeedsBeerQuest.Api.Models;
+using Microsoft.Extensions.ObjectPool;
 
 namespace LeedsBeerQuest.Api
 {
@@ -6,6 +7,7 @@ namespace LeedsBeerQuest.Api
     {
         //TODO: Not sure about leaving this as a field
         private string[] _columns;
+
         public BeerEstablishment[] Parse(string data)
         {
             string[] allRows = data.TrimEnd('\n').TrimEnd('\r').Split("\r\n");
@@ -19,7 +21,6 @@ namespace LeedsBeerQuest.Api
         private BeerEstablishment[] ParseDataRows(string columnHeaders, params string[] rows)
         {
             _columns = columnHeaders.Replace("\"", "").Split(',');
-
             return rows.Select(row =>
             {
                 var rowData = row.Split("\",\"");
@@ -53,7 +54,7 @@ namespace LeedsBeerQuest.Api
                     Amenities = GetDoubleValueForField("stars_amenities", rowData),
                     Value = GetDoubleValueForField("stars_value", rowData)
                 },
-                Tags = GetValueForField("tags", rowData).Split(',')
+                Tags = GetStringArrayForField("tags", rowData)
             };
         }
 
@@ -77,6 +78,16 @@ namespace LeedsBeerQuest.Api
         {
             var index = Array.IndexOf(_columns, fieldName);
             return index;
+        }
+
+        private string[] GetStringArrayForField(string fieldName, string[] rowData)
+        {
+            var value = GetValueForField(fieldName, rowData);
+            if (string.IsNullOrEmpty(value))
+            {
+                return Array.Empty<string>();
+            }
+            return value.Split(',');
         }
     }
 }

@@ -32,7 +32,7 @@ app.UseCors(options =>
 });
 
 app.MapControllers();
-app.MapGet("/data-management/import", async ([FromServices] DataImporter importer) =>
+app.MapPatch("/data-management/import", async ([FromServices] DataImporter importer) =>
 {
     await importer.Import();
 });
