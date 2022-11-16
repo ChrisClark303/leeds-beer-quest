@@ -8,7 +8,7 @@ import { BeerEstablishmentLocation } from './beer-establishment-location';
 })
 export class BeerQuestService {
 
-  private serviceUrl: string = 'http://localhost:5174';
+  private serviceUrl: string = 'https://leedsbeerquestapi.azurewebsites.net/';
 
   constructor(private httpClient: HttpClient) { }
 
