@@ -1,5 +1,7 @@
 ﻿using LeedsBeerQuest.Api.Services;
 using LeedsBeerQuest.Api.Settings;
+using LeedsBeerQuest.Data;
+using LeedsBeerQuest.Data.Mongo;
 using Microsoft.Extensions.Caching.Memory;
 using System.Runtime.CompilerServices;
 
@@ -12,7 +14,7 @@ namespace LeedsBeerQuest.Api
             services.AddScoped<DataImporter>();
             services.AddScoped<IBeerEstablishmentDataParser, BeerEstablishmentDataParser>();
             services.AddSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
-            services.AddScoped<IDataManagementService, InMemoryDataManagementService>();
+            services.AddScoped<IDataManagementService, MongoDbDataManagementService>();
             services.AddScoped<IFindMeBeerService, FindMeBeerService>();
             services.AddScoped<ILocationDistanceCalculator, LocationDistanceCalculator>();
             services.AddHttpClient<DataImporter>(client =>
@@ -25,7 +27,9 @@ namespace LeedsBeerQuest.Api
 
         public static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration config)
         {
-            services.Configure<FindMeBeerServiceSettings>(config.GetSection("FindMeBeerServiceSettings"));
+            services
+                .Configure<FindMeBeerServiceSettings>(config.GetSection("FindMeBeerServiceSettings"))
+                .Configure<MongoDbSettings>(config.GetSection("MongoDBSettings"));
             return services;
         }
     }

@@ -1,6 +1,6 @@
 using LeedsBeerQuest.Api;
-using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Api.Services;
+using LeedsBeerQuest.Data;
+using LeedsBeerQuest.Data.Models;
 using Moq;
 
 namespace LeedsBeerQuest.Tests

@@ -1,6 +1,7 @@
 using LeedsBeerQuest.Api;
 using LeedsBeerQuest.Api.Models;
 using LeedsBeerQuest.Api.Services;
+using LeedsBeerQuest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -39,7 +40,7 @@ app.MapPatch("/data-management/import", async ([FromServices] DataImporter impor
 app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService beerService) =>
 {
     //need to gather the location somehow!!
-    return await beerService.GetNearestBeerLocations(new Location());
+    return await beerService.GetNearestBeerLocations(default);
 });
 
 app.Run();

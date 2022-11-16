@@ -1,4 +1,4 @@
-﻿namespace LeedsBeerQuest.Api.Models
+﻿namespace LeedsBeerQuest.Data.Models
 {
     public struct Location
     {

@@ -15,3 +15,9 @@
 /LeedsBeerQuest/LeedsBeerQuest.Tests.Specflow/LeedsBeerQuest.Tests.Specflow.v3.ncrunchproject.user
 /LeedsBeerQuest/LeedsBeerQuest.Tests.Specflow/LeedsBeerQuest.Tests.Specflow.v3.ncrunchproject
 /LeedsBeerQuest/LeedsBeerQuest.Api/bin/Release/net7.0
+/LeedsBeerQuest/LeedsBeerQuest.Data.InMemory/obj
+/LeedsBeerQuest/LeedsBeerQuest.Data.Mongo/bin/Debug/net7.0
+/LeedsBeerQuest/LeedsBeerQuest.Data.Mongo/obj
+/LeedsBeerQuest/LeedsBeerQuest.Data.InMemory/bin/Debug/net7.0
+/LeedsBeerQuest/LeedsBeerQuest.v3.ncrunchsolution.user
+/LeedsBeerQuest/LeedsBeerQuest.v3.ncrunchsolution

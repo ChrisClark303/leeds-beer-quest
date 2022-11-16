@@ -1,4 +1,6 @@
-﻿namespace LeedsBeerQuest.Api.Models
+﻿using LeedsBeerQuest.Data.Models;
+
+namespace LeedsBeerQuest.Api.Models
 {
     public class BeerEstablishmentLocation
     {

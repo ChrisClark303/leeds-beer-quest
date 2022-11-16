@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using LeedsBeerQuest.Api.Services;
+using LeedsBeerQuest.Data;
 
 namespace LeedsBeerQuest.Api
 {

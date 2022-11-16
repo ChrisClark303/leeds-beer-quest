@@ -1,5 +1,6 @@
 ﻿using LeedsBeerQuest.Api.Models;
 using LeedsBeerQuest.Api.Settings;
+using LeedsBeerQuest.Data.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 

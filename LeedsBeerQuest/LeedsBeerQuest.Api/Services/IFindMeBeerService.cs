@@ -1,4 +1,5 @@
 ﻿using LeedsBeerQuest.Api.Models;
+using LeedsBeerQuest.Data.Models;
 
 namespace LeedsBeerQuest.Api.Services
 {
