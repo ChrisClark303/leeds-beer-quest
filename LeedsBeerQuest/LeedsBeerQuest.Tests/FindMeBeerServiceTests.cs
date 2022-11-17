@@ -1,6 +1,6 @@
-﻿using LeedsBeerQuest.Api.Services;
-using LeedsBeerQuest.Api.Settings;
-using LeedsBeerQuest.Data.Models;
+﻿using LeedsBeerQuest.App.Models;
+using LeedsBeerQuest.App.Services;
+using LeedsBeerQuest.App.Settings;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Moq;

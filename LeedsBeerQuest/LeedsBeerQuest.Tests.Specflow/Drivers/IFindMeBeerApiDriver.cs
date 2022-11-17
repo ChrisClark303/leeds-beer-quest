@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.Api.Models;
+﻿using LeedsBeerQuest.App.Models;
 
 namespace LeedsBeerQuest.Tests.Specflow.Drivers
 {

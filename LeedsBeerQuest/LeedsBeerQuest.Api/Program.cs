@@ -1,7 +1,6 @@
 using LeedsBeerQuest.Api;
-using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Api.Services;
-using LeedsBeerQuest.Data.Models;
+using LeedsBeerQuest.App;
+using LeedsBeerQuest.App.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -17,11 +16,8 @@ builder.Services.AddConfig(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

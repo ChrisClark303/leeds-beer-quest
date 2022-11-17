@@ -1,6 +1,6 @@
-﻿using LeedsBeerQuest.Data.Models;
+﻿using LeedsBeerQuest.App.Models;
 
-namespace LeedsBeerQuest.Api.Settings
+namespace LeedsBeerQuest.App.Settings
 {
     public class FindMeBeerServiceSettings
     {

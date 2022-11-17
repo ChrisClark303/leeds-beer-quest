@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.Data.csproj" />
+    <ProjectReference Include="..\LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.App.csproj" />
     <ProjectReference Include="..\LeedsBeerQuest.Data.Mongo\LeedsBeerQuest.Data.Mongo.csproj" />
   </ItemGroup>
 

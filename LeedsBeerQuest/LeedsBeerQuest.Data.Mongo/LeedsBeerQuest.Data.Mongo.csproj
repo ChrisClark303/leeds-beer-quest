@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.Data.csproj" />
+    <ProjectReference Include="..\LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.App.csproj" />
   </ItemGroup>
 
 </Project>

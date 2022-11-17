@@ -1,10 +1,9 @@
-﻿using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Api.Settings;
-using LeedsBeerQuest.Data.Models;
+﻿using LeedsBeerQuest.App.Models;
+using LeedsBeerQuest.App.Settings;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
-namespace LeedsBeerQuest.Api.Services
+namespace LeedsBeerQuest.App.Services
 {
     public class FindMeBeerService : IFindMeBeerService
     {

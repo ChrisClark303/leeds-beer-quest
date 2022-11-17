@@ -1,4 +1,5 @@
 ﻿using LeedsBeerQuest.Api;
+using LeedsBeerQuest.App;
 using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace LeedsBeerQuest.Tests
             var parser = new BeerEstablishmentDataParser();
             var establishments = parser.Parse(allData);
 
-            Assert.IsEmpty(establishments.First().Tags);
+            Assert.That(establishments.First().Tags, Is.Empty);
         }
     }
 }

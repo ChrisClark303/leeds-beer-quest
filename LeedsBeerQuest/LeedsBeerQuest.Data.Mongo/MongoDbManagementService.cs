@@ -1,4 +1,5 @@
-﻿using LeedsBeerQuest.Data.Models;
+﻿using LeedsBeerQuest.App;
+using LeedsBeerQuest.App.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
@@ -9,13 +10,10 @@ using System.Threading.Tasks;
 
 namespace LeedsBeerQuest.Data.Mongo
 {
-    public class MongoDbDataManagementService : IDataManagementService
+    public class MongoDbDataManagementService : MongoDbBase, IDataManagementService
     {
-        private readonly MongoDbSettings _settings;
-
-        public MongoDbDataManagementService(IOptions<MongoDbSettings> settings)
+        public MongoDbDataManagementService(IOptions<MongoDbSettings> settings) : base(settings)
         {
-            _settings = settings.Value;
         }
 
         public void ImportData(BeerEstablishment[] establishments)
@@ -25,14 +23,6 @@ namespace LeedsBeerQuest.Data.Mongo
             var collection = database.GetCollection<BeerEstablishment>("Venues");
             collection.DeleteMany(Builders<BeerEstablishment>.Filter.Empty);
             collection.InsertMany(establishments);
-        }
-
-        private IMongoDatabase ConnectToDatabase()
-        {
-            var settings = MongoClientSettings.FromConnectionString(_settings.ConnectionString);
-            settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-            var client = new MongoClient(settings);
-            return client.GetDatabase("LeedsBeerQuest");
         }
     }
 }

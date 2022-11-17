@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeedsBeerQuest.Tests", "Lee
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeedsBeerQuest.Tests.Specflow", "LeedsBeerQuest.Tests.Specflow\LeedsBeerQuest.Tests.Specflow.csproj", "{D2D451A2-C64A-424A-98E4-1F0CB5CD64EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeedsBeerQuest.Data.Mongo", "LeedsBeerQuest.Data.Mongo\LeedsBeerQuest.Data.Mongo.csproj", "{F1679E92-9810-4F49-93CE-6E822AA72F8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeedsBeerQuest.Data.Mongo", "LeedsBeerQuest.Data.Mongo\LeedsBeerQuest.Data.Mongo.csproj", "{F1679E92-9810-4F49-93CE-6E822AA72F8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeedsBeerQuest.Data", "LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.Data.csproj", "{959A00FC-EFA9-418C-80FF-6B4EAE82CF1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeedsBeerQuest.App", "LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.App.csproj", "{959A00FC-EFA9-418C-80FF-6B4EAE82CF1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

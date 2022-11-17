@@ -1,5 +1,4 @@
 using Gherkin.CucumberMessages.Types;
-using LeedsBeerQuest.Api.Models;
 using LeedsBeerQuest.Tests.Specflow.Drivers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;

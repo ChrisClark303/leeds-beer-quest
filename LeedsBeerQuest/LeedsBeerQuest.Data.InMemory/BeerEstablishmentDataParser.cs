@@ -1,8 +1,7 @@
-﻿using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Data.Models;
-using Microsoft.Extensions.ObjectPool;
+﻿
+using LeedsBeerQuest.App.Models;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.App
 {
     public class BeerEstablishmentDataParser : IBeerEstablishmentDataParser
     {
@@ -67,12 +66,12 @@ namespace LeedsBeerQuest.Api
                 return string.Empty;
             }
 
-            return rowData[index].Trim('\"',' ');
+            return rowData[index].Trim('\"', ' ');
         }
 
-        private Double GetDoubleValueForField(string fieldName, string[] rowData)
+        private double GetDoubleValueForField(string fieldName, string[] rowData)
         {
-            return Double.Parse(GetValueForField(fieldName, rowData));
+            return double.Parse(GetValueForField(fieldName, rowData));
         }
 
         private int GetPositionForField(string fieldName)

@@ -1,7 +1,6 @@
-﻿using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Data.Models;
+﻿using LeedsBeerQuest.App.Models;
 
-namespace LeedsBeerQuest.Api.Services
+namespace LeedsBeerQuest.App.Services
 {
     public interface IFindMeBeerService
     {
