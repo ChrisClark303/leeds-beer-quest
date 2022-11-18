@@ -12,26 +12,26 @@ using System.Threading.Tasks;
 
 namespace LeedsBeerQuest.Data.Mongo
 {
-    public class MongoDbFindMeBeerService : MongoDbBase, IFindMeBeerService
+    public class MongoDbFindMeBeerService : IFindMeBeerService
     {
-        public MongoDbFindMeBeerService(IOptions<MongoDbSettings> settings) : base(settings)
+        public MongoDbFindMeBeerService(IOptions<MongoDbSettings> settings)
         {
         }
 
         public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation)
         {
-            var database = ConnectToDatabase();
-            var collection = database.GetCollection<BeerEstablishment>("Venues");
+            //var database = ConnectToDatabase();
+            //var collection = database.GetCollection<BeerEstablishment>("Venues");
 
-            PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> pipeline = new BsonDocument[]
-            {
-                CreateGeoNearStage(-1.555570961376415, 53.801196991070164),
-                CreateProjectionStage(),
-                CreateLimitStage(10)
-            };
+            //PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> pipeline = new BsonDocument[]
+            //{
+            //    CreateGeoNearStage(-1.555570961376415, 53.801196991070164),
+            //    CreateProjectionStage(),
+            //    CreateLimitStage(10)
+            //};
 
-            var cursor = collection.Aggregate(pipeline);
-            return (await cursor.ToListAsync()).ToArray();
+            //var cursor = collection.Aggregate(pipeline);
+            //return (await cursor.ToListAsync()).ToArray();
 
             return Array.Empty<BeerEstablishmentLocation>();
         }
@@ -52,9 +52,15 @@ namespace LeedsBeerQuest.Data.Mongo
                                 lat
                             }}
                     }    },
-                { "key", "Location.Coordinates" },
-                { "distanceField", "Distance" }
-            });
+                    { "key", "Location.Coordinates" },
+                    { "distanceField", "Distance" },
+                    { "query", GetQuery() }
+                });
+        }
+
+        private BsonDocument GetQuery()
+        {
+            return new BsonDocument("Category", new BsonDocument("$ne", "Closed venues"));
         }
 
         private BsonDocument CreateProjectionStage()

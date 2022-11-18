@@ -11,15 +11,15 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeedsBeerQuest.Tests
+namespace LeedsBeerQuest.Tests.App
 {
     internal class FindMeBeerServiceTests
     {
         private FindMeBeerService CreateService(IMemoryCache? memCache = null, ILocationDistanceCalculator? distanceCalc = null, int pageSize = 5, Location defaultSearchLocation = default)
         {
-            return new FindMeBeerService(memCache ?? new MemoryCache(new MemoryCacheOptions()), 
-                distanceCalc ?? new Mock<ILocationDistanceCalculator>().Object, 
-                Options.Create<FindMeBeerServiceSettings>(new FindMeBeerServiceSettings() { DefaultPageSize = pageSize, DefaultSearchLocation = defaultSearchLocation}));
+            return new FindMeBeerService(memCache ?? new MemoryCache(new MemoryCacheOptions()),
+                distanceCalc ?? new Mock<ILocationDistanceCalculator>().Object,
+                Options.Create(new FindMeBeerServiceSettings() { DefaultPageSize = pageSize, DefaultSearchLocation = defaultSearchLocation }));
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace LeedsBeerQuest.Tests
         {
             var memCache = new MemoryCache(new MemoryCacheOptions());
 
-            var findMeBeer = CreateService(memCache); 
+            var findMeBeer = CreateService(memCache);
             var establishments = await findMeBeer.GetNearestBeerLocations(new Location());
 
             Assert.That(establishments, Is.Empty);
@@ -74,7 +74,7 @@ namespace LeedsBeerQuest.Tests
 
             Location myLocation = new Location() { Lat = 10, Long = 11 };
             var findMeBeer = CreateService(memCache, distanceCalculator.Object, defaultSearchLocation: myLocation);
-            
+
             var establishments = await findMeBeer.GetNearestBeerLocations(default);
 
             distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location1));
@@ -113,7 +113,7 @@ namespace LeedsBeerQuest.Tests
             var findMeBeer = CreateService(memCache, distanceCalculator.Object, pageSize: 4);
             var establishments = await findMeBeer.GetNearestBeerLocations(new Location());
 
-            Assert.That(establishments.Select(e => e.Distance), Is.EqualTo(new[] { 1,2,3,4 } ));
+            Assert.That(establishments.Select(e => e.Distance), Is.EqualTo(new[] { 1, 2, 3, 4 }));
         }
     }
 

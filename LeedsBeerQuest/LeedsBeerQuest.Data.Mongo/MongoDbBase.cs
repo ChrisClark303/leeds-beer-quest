@@ -11,21 +11,21 @@ using System.Threading.Tasks;
 
 namespace LeedsBeerQuest.Data.Mongo
 {
-    public abstract class MongoDbBase
+    public class MongoDatabaseConnectionFactory : IMongoDatabaseConnectionFactory
     {
         private readonly MongoDbSettings _settings;
 
-        public MongoDbBase(IOptions<MongoDbSettings> settings)
+        public MongoDatabaseConnectionFactory(IOptions<MongoDbSettings> settings)
         {
             _settings = settings.Value;
         }
 
-        protected IMongoDatabase ConnectToDatabase()
+        public IMongoDatabase ConnectToDatabase()
         {
             var settings = MongoClientSettings.FromConnectionString(_settings.ConnectionString);
             settings.ServerApi = new ServerApi(ServerApiVersion.V1);
             var client = new MongoClient(settings);
-            return client.GetDatabase("LeedsBeerQuest");
+            return client.GetDatabase("LeedsBeerQuest"); //TODO : Name of DB should be in config
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeedsBeerQuest.Tests
+namespace LeedsBeerQuest.Tests.App
 {
     public class BeerEstablishmentDataParserTests
     {
