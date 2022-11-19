@@ -20,6 +20,7 @@ namespace LeedsBeerQuest.Api
             }
             else
             {
+                services.AddScoped<IMongoDatabaseConnectionFactory, MongoDatabaseConnectionFactory>();
                 services.AddScoped<IDataManagementService, MongoDbDataManagementService>();
                 services.AddScoped<IFindMeBeerService, MongoDbFindMeBeerService>();
             }

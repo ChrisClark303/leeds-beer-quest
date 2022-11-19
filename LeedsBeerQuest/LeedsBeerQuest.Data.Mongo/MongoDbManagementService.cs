@@ -19,14 +19,16 @@ namespace LeedsBeerQuest.Data.Mongo
             _connectionFactory = connectionFactory;
         }
 
+        //TODO : This should be async
         public void ImportData(BeerEstablishment[] establishments)
         {
             IMongoDatabase database = _connectionFactory.ConnectToDatabase();
-
             var collection = database.GetCollection<BeerEstablishment>("Venues");
+            
             collection.DeleteMany(Builders<BeerEstablishment>.Filter.Empty);
             collection.InsertMany(establishments);
-            var indexKey = Builders<BeerEstablishment>.IndexKeys.Geo2DSphere(v => v.Location);
+
+            var indexKey = Builders<BeerEstablishment>.IndexKeys.Geo2DSphere(v => v.Location.Coordinates);
             collection.Indexes.CreateOne(new CreateIndexModel<BeerEstablishment>(indexKey));
         }
     }

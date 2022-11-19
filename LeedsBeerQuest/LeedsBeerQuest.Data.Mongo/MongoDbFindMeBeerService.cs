@@ -14,14 +14,19 @@ namespace LeedsBeerQuest.Data.Mongo
 {
     public class MongoDbFindMeBeerService : IFindMeBeerService
     {
-        public MongoDbFindMeBeerService(IOptions<MongoDbSettings> settings)
+        private readonly IMongoDatabaseConnectionFactory _connFactory;
+        private readonly IMongoQueryBuilder _queryBuilder;
+
+        public MongoDbFindMeBeerService(IMongoDatabaseConnectionFactory connFactory, IMongoQueryBuilder queryBuilder)
         {
+            _connFactory = connFactory;
+            _queryBuilder = queryBuilder;
         }
 
         public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation)
         {
-            //var database = ConnectToDatabase();
-            //var collection = database.GetCollection<BeerEstablishment>("Venues");
+            var database = _connFactory.ConnectToDatabase();
+            var collection = database.GetCollection<BeerEstablishment>("Venues");
 
             //PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> pipeline = new BsonDocument[]
             //{
@@ -30,19 +35,25 @@ namespace LeedsBeerQuest.Data.Mongo
             //    CreateLimitStage(10)
             //};
 
-            //var cursor = collection.Aggregate(pipeline);
-            //return (await cursor.ToListAsync()).ToArray();
+            var pipeline = _queryBuilder.BuildPipeline();
+            IAsyncCursor<BeerEstablishmentLocation> cursor = collection.Aggregate(pipeline);
+            return (await cursor.ToListAsync()).ToArray();
 
-            return Array.Empty<BeerEstablishmentLocation>();
+            //return Array.Empty<BeerEstablishmentLocation>();
         }
 
-        private BsonDocument CreateGeoNearStage(double lng, double lat)
-        {
-            return new BsonDocument("$geoNear",
-                new BsonDocument
-                {
-                    { "near",
-                        new BsonDocument
+
+    }
+}
+
+public class MongoQueryBuilder : IMongoQueryBuilder
+{
+    public BsonDocument CreateGeoNearDocument(double lng, double lat, string keyName, string distanceFieldName)
+    {
+        return new BsonDocument("$geoNear",
+            new BsonDocument
+            {
+                    { "near", new BsonDocument
                         {
                             { "type", "Point" },
                             { "coordinates",
@@ -52,34 +63,44 @@ namespace LeedsBeerQuest.Data.Mongo
                                 lat
                             }}
                     }    },
-                    { "key", "Location.Coordinates" },
-                    { "distanceField", "Distance" },
-                    { "query", GetQuery() }
-                });
-        }
-
-        private BsonDocument GetQuery()
-        {
-            return new BsonDocument("Category", new BsonDocument("$ne", "Closed venues"));
-        }
-
-        private BsonDocument CreateProjectionStage()
-        {
-            return new BsonDocument("$project",
-            new BsonDocument
-            {
-                { "_id", 0 },
-                { "Name", 1 },
-                { "Distance", 1 },
-                { "Location", 1 }
+                    { "key", keyName },
+                    { "distanceField", distanceFieldName },
+                   // { "query", CreateNotEqualQuery("Category", "Closed venues") } //TODO : pass in query details
             });
-        }
+    }
 
-        private BsonDocument CreateLimitStage(int pageSize)
+    public BsonDocument CreateNotEqualQuery(string fieldName, string fieldValue)
+    {
+        return new BsonDocument(fieldName, new BsonDocument("$ne", fieldValue));
+    }
+
+    public BsonDocument CreateProjectionStage(string[] fieldsToInclude, bool excludeId = false)
+    {
+        var projectedFieldDict = new Dictionary<string, int>(fieldsToInclude.Select(f => new KeyValuePair<string, int>(f, 1)));
+        if (excludeId)
         {
-            return new BsonDocument("$limit", pageSize);
-        }
+            projectedFieldDict.Add("_id", 0);
+        };
 
-        
+        return new BsonDocument("$project",
+            new BsonDocument(projectedFieldDict)
+        );
+    }
+
+    public BsonDocument CreateLimitStage(int pageSize)
+    {
+        return new BsonDocument("$limit", pageSize);
+    }
+
+    public PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> BuildPipeline()
+    {
+        PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> pipeline = new BsonDocument[]
+        {
+            CreateGeoNearDocument(-1.555570961376415, 53.801196991070164, "Location.Coordinates", "DistanceInMetres"),
+            //CreateProjectionStage(new [] { "Name" }, true),
+            //CreateLimitStage(10)
+        };
+
+        return pipeline;
     }
 }
