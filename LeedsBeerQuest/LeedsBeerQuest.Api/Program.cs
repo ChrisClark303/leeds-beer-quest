@@ -1,6 +1,6 @@
 using LeedsBeerQuest.Api;
-using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Api.Services;
+using LeedsBeerQuest.App;
+using LeedsBeerQuest.App.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -16,11 +16,8 @@ builder.Services.AddConfig(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -39,7 +36,7 @@ app.MapPatch("/data-management/import", async ([FromServices] DataImporter impor
 app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService beerService) =>
 {
     //need to gather the location somehow!!
-    return await beerService.GetNearestBeerLocations(new Location());
+    return await beerService.GetNearestBeerLocations(default);
 });
 
 app.Run();

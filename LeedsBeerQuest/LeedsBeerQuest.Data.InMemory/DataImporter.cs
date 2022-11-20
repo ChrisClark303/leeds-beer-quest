@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using LeedsBeerQuest.Api.Services;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.App
 {
     public class DataImporter
     {

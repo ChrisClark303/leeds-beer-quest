@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.Api.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
 using System;

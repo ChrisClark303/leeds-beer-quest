@@ -1,7 +1,8 @@
-﻿using LeedsBeerQuest.Api.Models;
-using Microsoft.Extensions.ObjectPool;
+﻿using LeedsBeerQuest.App.Models;
+using LeedsBeerQuest.App.Models.Read;
+using LocationWriteModel = LeedsBeerQuest.App.Models.Write.Location;
 
-namespace LeedsBeerQuest.Api
+namespace LeedsBeerQuest.App
 {
     public class BeerEstablishmentDataParser : IBeerEstablishmentDataParser
     {
@@ -39,7 +40,7 @@ namespace LeedsBeerQuest.Api
                 Date = DateTime.Parse(GetValueForField("date", rowData)),
                 Excerpt = GetValueForField("excerpt", rowData),
                 Thumbnail = new Uri(GetValueForField("thumbnail", rowData)),
-                Location = new Location
+                Location = new LocationWriteModel
                 {
                     Lat = GetDoubleValueForField("lat", rowData),
                     Long = GetDoubleValueForField("lng", rowData)
@@ -66,12 +67,12 @@ namespace LeedsBeerQuest.Api
                 return string.Empty;
             }
 
-            return rowData[index].Trim('\"',' ');
+            return rowData[index].Trim('\"', ' ');
         }
 
-        private Double GetDoubleValueForField(string fieldName, string[] rowData)
+        private double GetDoubleValueForField(string fieldName, string[] rowData)
         {
-            return Double.Parse(GetValueForField(fieldName, rowData));
+            return double.Parse(GetValueForField(fieldName, rowData));
         }
 
         private int GetPositionForField(string fieldName)

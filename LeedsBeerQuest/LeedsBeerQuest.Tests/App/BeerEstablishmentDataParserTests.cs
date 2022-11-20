@@ -1,4 +1,5 @@
 ﻿using LeedsBeerQuest.Api;
+using LeedsBeerQuest.App;
 using NuGet.Frameworks;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LeedsBeerQuest.Tests
+namespace LeedsBeerQuest.Tests.App
 {
     public class BeerEstablishmentDataParserTests
     {
@@ -45,6 +46,22 @@ namespace LeedsBeerQuest.Tests
         }
 
         [Test]
+        public void Parse_UsesLocationWriteModel_AsLocationType()
+        {
+            string allData = "\"name\",\"category\",\"url\",\"date\",\"excerpt\",\"thumbnail\",\"lat\",\"lng\",\"address\",\"phone\",\"twitter\",\"stars_beer\",\"stars_atmosphere\",\"stars_amenities\",\"stars_value\",\"tags\"\r\n" +
+                "\"...escobar\",\"Closed venues\",\"http://leedsbeer.info/?p=765\",\"2012-11-30T21:58:52+00:00\",\"...It's really dark in here!\"," +
+                "\"http://leedsbeer.info/wp-content/uploads/2012/11/20121129_185815.jpg\",\"53.8007317\",\"-1.5481764\"," +
+                "\"23-25 Great George Street, Leeds LS1 3BB\",\"0113 220 4389\",\"EscobarLeeds\",\"2.2\",\"3\",\"3\",\"3.9\"," +
+                "\"food,live music,sofas\"";
+
+            var parser = new BeerEstablishmentDataParser();
+            var establishments = parser.Parse(allData);
+
+            var establishment = establishments.First();
+            Assert.That(establishment.Location, Is.TypeOf<LeedsBeerQuest.App.Models.Write.Location>());
+        }
+
+        [Test]
         public void Parse_CreatesModelsForEveryDataRow()
         {
             string allData = "\"name\",\"category\",\"url\",\"date\",\"excerpt\",\"thumbnail\",\"lat\",\"lng\",\"address\",\"phone\",\"twitter\",\"stars_beer\",\"stars_atmosphere\",\"stars_amenities\",\"stars_value\",\"tags\"\r\n" +
@@ -72,7 +89,7 @@ namespace LeedsBeerQuest.Tests
             var parser = new BeerEstablishmentDataParser();
             var establishments = parser.Parse(allData);
 
-            Assert.IsEmpty(establishments.First().Tags);
+            Assert.That(establishments.First().Tags, Is.Empty);
         }
     }
 }

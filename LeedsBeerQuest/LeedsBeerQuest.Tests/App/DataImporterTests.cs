@@ -1,17 +1,16 @@
-using LeedsBeerQuest.Api;
-using LeedsBeerQuest.Api.Models;
-using LeedsBeerQuest.Api.Services;
+using LeedsBeerQuest.App;
+using LeedsBeerQuest.App.Models.Read;
 using Moq;
 
-namespace LeedsBeerQuest.Tests
+namespace LeedsBeerQuest.Tests.App
 {
     public class DataImporterTests
     {
         private DataImporter CreateDataImporter(StubMessageHandler? stubMessageHandler = null, IBeerEstablishmentDataParser? dataParser = null, IDataManagementService dataManagementService = null)
         {
             var httpClient = new HttpClient(stubMessageHandler ?? new StubMessageHandler()) { BaseAddress = new Uri("http://test_uri/") };
-            return new DataImporter(httpClient, 
-                dataParser ?? new Mock<IBeerEstablishmentDataParser>().Object, 
+            return new DataImporter(httpClient,
+                dataParser ?? new Mock<IBeerEstablishmentDataParser>().Object,
                 dataManagementService ?? new Mock<IDataManagementService>().Object);
         }
 
@@ -47,7 +46,7 @@ namespace LeedsBeerQuest.Tests
             var parser = new Mock<IBeerEstablishmentDataParser>();
             BeerEstablishment[] establishments = new[] { new BeerEstablishment() };
             parser.Setup(p => p.Parse(It.IsAny<string>()))
-                .Returns(establishments) ;
+                .Returns(establishments);
             var service = new Mock<IDataManagementService>();
 
             var dataImporter = CreateDataImporter(dataParser: parser.Object, dataManagementService: service.Object);

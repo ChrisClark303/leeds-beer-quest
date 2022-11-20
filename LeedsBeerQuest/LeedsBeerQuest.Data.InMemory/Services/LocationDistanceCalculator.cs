@@ -1,17 +1,7 @@
-﻿using LeedsBeerQuest.Api.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 
-namespace LeedsBeerQuest.Api.Services
+namespace LeedsBeerQuest.App.Services
 {
-    public interface IFindMeBeerService
-    {
-        Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation);
-    }
-
-    public interface ILocationDistanceCalculator
-    {
-        double CalculateDistanceInMiles(Location startLocation, Location targetLocation);
-    }
-
     /// <summary>
     /// The solution here is very heavily based on https://www.geeksforgeeks.org/program-distance-two-points-earth/
     /// </summary>
@@ -40,7 +30,7 @@ namespace LeedsBeerQuest.Api.Services
 
             double c = 2 * Math.Asin(Math.Sqrt(a));
 
-            return Math.Round(c * _radiusOfEarthInMiles, 3);
+            return Math.Round(c * _radiusOfEarthInMiles, 4);
         }
 
         static double toRadians(double angleIn10thofaDegree)
