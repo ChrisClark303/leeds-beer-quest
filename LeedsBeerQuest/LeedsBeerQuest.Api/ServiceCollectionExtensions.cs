@@ -23,6 +23,7 @@ namespace LeedsBeerQuest.Api
                 services.AddScoped<IMongoDatabaseConnectionFactory, MongoDatabaseConnectionFactory>();
                 services.AddScoped<IDataManagementService, MongoDbDataManagementService>();
                 services.AddScoped<IFindMeBeerService, MongoDbFindMeBeerService>();
+                services.AddScoped<IMongoQueryBuilder, MongoQueryBuilder>();
             }
 
             services.AddScoped<DataImporter>();

@@ -4,9 +4,10 @@ using MongoDB.Driver;
 
 public interface IMongoQueryBuilder
 {
+    IMongoQueryBuilder CreateGeoNearDocument(double lng, double lat, string keyName, string distanceFieldName);
+    IMongoQueryBuilder CreateLimitStage(int pageSize);
+    IMongoQueryBuilder CreateNotEqualQuery(string fieldName, string fieldValue);
+    IMongoQueryBuilder CreateProjectionStage(string[] fieldsToInclude, bool excludeId = false);
+    BsonDocument[] Build();
     PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> BuildPipeline();
-    BsonDocument CreateGeoNearDocument(double lng, double lat, string keyName, string distanceFieldName);
-    BsonDocument CreateLimitStage(int pageSize);
-    BsonDocument CreateNotEqualQuery(string fieldName, string fieldValue);
-    BsonDocument CreateProjectionStage(string[] fieldsToInclude, bool excludeId = false);
 }
