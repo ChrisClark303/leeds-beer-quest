@@ -15,7 +15,7 @@ namespace LeedsBeerQuest.Tests.App
 {
     internal class FindMeBeerServiceTests
     {
-        private FindMeBeerService CreateService(IMemoryCache? memCache = null, ILocationDistanceCalculator? distanceCalc = null, int pageSize = 5, Location defaultSearchLocation = default)
+        private FindMeBeerService CreateService(IMemoryCache? memCache = null, ILocationDistanceCalculator? distanceCalc = null, int pageSize = 5, Location? defaultSearchLocation = null)
         {
             return new FindMeBeerService(memCache ?? new MemoryCache(new MemoryCacheOptions()),
                 distanceCalc ?? new Mock<ILocationDistanceCalculator>().Object,

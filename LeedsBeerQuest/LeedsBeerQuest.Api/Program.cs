@@ -36,7 +36,7 @@ app.MapPatch("/data-management/import", async ([FromServices] DataImporter impor
 app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService beerService) =>
 {
     //need to gather the location somehow!!
-    return await beerService.GetNearestBeerLocations(default);
+    return await beerService.GetNearestBeerLocations();
 });
 
 app.Run();

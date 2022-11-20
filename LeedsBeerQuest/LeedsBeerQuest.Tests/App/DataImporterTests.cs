@@ -6,7 +6,7 @@ namespace LeedsBeerQuest.Tests.App
 {
     public class DataImporterTests
     {
-        private DataImporter CreateDataImporter(StubMessageHandler? stubMessageHandler = null, IBeerEstablishmentDataParser? dataParser = null, IDataManagementService dataManagementService = null)
+        private DataImporter CreateDataImporter(StubMessageHandler? stubMessageHandler = null, IBeerEstablishmentDataParser? dataParser = null, IDataManagementService? dataManagementService = null)
         {
             var httpClient = new HttpClient(stubMessageHandler ?? new StubMessageHandler()) { BaseAddress = new Uri("http://test_uri/") };
             return new DataImporter(httpClient,

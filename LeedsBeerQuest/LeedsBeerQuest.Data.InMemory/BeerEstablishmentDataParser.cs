@@ -7,7 +7,7 @@ namespace LeedsBeerQuest.App
     public class BeerEstablishmentDataParser : IBeerEstablishmentDataParser
     {
         //TODO: Not sure about leaving this as a field
-        private string[] _columns;
+        private string[]? _columns;
 
         public BeerEstablishment[] Parse(string data)
         {
@@ -77,7 +77,7 @@ namespace LeedsBeerQuest.App
 
         private int GetPositionForField(string fieldName)
         {
-            var index = Array.IndexOf(_columns, fieldName);
+            var index = Array.IndexOf(_columns!, fieldName);
             return index;
         }
 

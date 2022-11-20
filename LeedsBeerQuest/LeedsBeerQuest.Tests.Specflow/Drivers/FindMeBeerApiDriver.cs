@@ -14,7 +14,7 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
     {
         private readonly HttpClient _client;
 
-        public BeerEstablishmentLocation[] Establishments { get; private set; }
+        public BeerEstablishmentLocation[]? Establishments { get; private set; }
 
         public FindMeBeerApiDriver(WebApplicationFactory<Program> factory)
         {

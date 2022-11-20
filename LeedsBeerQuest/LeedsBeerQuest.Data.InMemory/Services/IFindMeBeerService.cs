@@ -4,6 +4,6 @@ namespace LeedsBeerQuest.App.Services
 {
     public interface IFindMeBeerService
     {
-        Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation);
+        Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null);
     }
 }

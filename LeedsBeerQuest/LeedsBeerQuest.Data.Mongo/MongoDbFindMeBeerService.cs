@@ -25,19 +25,19 @@ namespace LeedsBeerQuest.Data.Mongo
             _settings = settings.Value;
         }
 
-        public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location myLocation)
+        public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
             var database = _connFactory.ConnectToDatabase();
             var collection = database.GetCollection<BeerEstablishment>("Venues");
 
-            var startLocation = myLocation ?? _settings.DefaultSearchLocation;
+            var startLocation = myLocation ?? _settings.DefaultSearchLocation!;
             var pipeline = _queryBuilder
                 .CreateGeoNearDocument(startLocation.Long, startLocation.Lat, "Location.Coordinates", "DistanceInMetres")
                 .CreateProjectionStage(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, true)
                 .CreateLimitStage(_settings.DefaultPageSize)
                 .BuildPipeline();
-            IAsyncCursor<BeerEstablishmentLocation> cursor = collection.Aggregate(pipeline);
-            return (await cursor.ToListAsync()).ToArray();
+            var resultsCursor = collection.Aggregate(pipeline);
+            return (await resultsCursor.ToListAsync()).ToArray();
         }
     }
 }

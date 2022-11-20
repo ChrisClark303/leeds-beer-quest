@@ -14,7 +14,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
                 Mock<IMongoDatabase>? database = null,
                 Mock<IMongoCollection<BeerEstablishment>>? collection = null,
                 IMongoQueryBuilder? queryBuilder = null,
-                int pageSize = 5, Location defaultSearchLocation = default)
+                int pageSize = 5, Location? defaultSearchLocation = null)
         {
             var db = database ?? new Mock<IMongoDatabase>();
             var dbConnFactory = factory ?? new Mock<IMongoDatabaseConnectionFactory>();
