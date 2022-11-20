@@ -157,6 +157,92 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Fetch Nearest Beer Establishments by providing a location")]
+        public void FetchNearestBeerEstablishmentsByProvidingALocation()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Fetch Nearest Beer Establishments by providing a location", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 19
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 20
+ testRunner.Given("I provide a latitude of 53.794569064158246 and a longitiude of -1.547548815255316" +
+                        "5", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 21
+ testRunner.When("I request the nearest beers establishments", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Name",
+                            "Lat",
+                            "Lon",
+                            "Distance"});
+                table2.AddRow(new string[] {
+                            "The White Rose",
+                            "53.794857",
+                            "-1.5473708",
+                            "0.0212"});
+                table2.AddRow(new string[] {
+                            "The Scarbrough Hotel",
+                            "53.7953644",
+                            "-1.5463839",
+                            "0.0726"});
+                table2.AddRow(new string[] {
+                            "Golf\"\" Cafe Bar",
+                            "53.7934952",
+                            "-1.5478653",
+                            "0.0753"});
+                table2.AddRow(new string[] {
+                            "LIVIN\'italy",
+                            "53.7937393",
+                            "-1.5489566",
+                            "0.0811"});
+                table2.AddRow(new string[] {
+                            "Wetherspoon\'s, Railway Station",
+                            "53.7956467",
+                            "-1.5485017",
+                            "0.0839"});
+                table2.AddRow(new string[] {
+                            "Spencer\'s",
+                            "53.7952538",
+                            "-1.5457584",
+                            "0.087"});
+                table2.AddRow(new string[] {
+                            "The Hop",
+                            "53.7937317",
+                            "-1.5491514",
+                            "0.0873"});
+                table2.AddRow(new string[] {
+                            "The Head of Steam",
+                            "53.7952881",
+                            "-1.5457343",
+                            "0.0891"});
+                table2.AddRow(new string[] {
+                            "Baht\'ap",
+                            "53.7951088",
+                            "-1.5454998",
+                            "0.0915"});
+                table2.AddRow(new string[] {
+                            "The Prince of Wales",
+                            "53.7951393",
+                            "-1.54544",
+                            "0.0946"});
+#line 22
+ testRunner.Then("the 10 establishments closest to that location should be returned", ((string)(null)), table2, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

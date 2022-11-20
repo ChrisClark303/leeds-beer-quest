@@ -17,11 +17,26 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
             _driver = driver;
         }
 
-        [Given(@"I do not provide a location")]
-        public async Task GivenIDoNotProvideALocation()
+        [BeforeStep]
+        public async Task Setup()
         {
             var dataImported = await _driver.ImportData();
             Assert.True(dataImported);
+        }
+
+        [Given(@"I do not provide a location")]
+        public void GivenIDoNotProvideALocation()
+        {
+            _driver.SetSearchLocation(null);
+        }
+
+        //53.794569064158246
+        //-1.5475488152553165
+
+        [Given(@"I provide a latitude of (.*) and a longitiude of (.*)")]
+        public void GivenIProvideALatitudeAndLongitude(double lat, double lng)
+        {
+            _driver.SetSearchLocation(new App.Models.Read.Location() { Lat = lat, Long = lng });
         }
 
         [When(@"I request the nearest beers establishments")]
@@ -31,6 +46,7 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
             Assert.True(gotBeer);
         }
 
+        [Then(@"the 10 establishments closest to that location should be returned")]
         [Then(@"the 10 establishments closest to Joseph's Well should be returned")]
         public void ThenTheEstablishmentsClosestToJosephsWellShouldBeReturned(Table table)
         {
