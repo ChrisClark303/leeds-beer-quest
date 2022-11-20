@@ -1,8 +1,10 @@
 using LeedsBeerQuest.Api;
 using LeedsBeerQuest.App;
+using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.App.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System.Security.Cryptography.Xml;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,10 +35,15 @@ app.MapPatch("/data-management/import", async ([FromServices] DataImporter impor
 {
     await importer.Import();
 });
-app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService beerService) =>
+app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService beerService, double? lat, double? lng) =>
 {
-    //need to gather the location somehow!!
-    return await beerService.GetNearestBeerLocations(default);
+    //TODO : Move this into a controller since there is additional logic here.
+    Location? location = null;
+    if (lat != null && lng != null)
+    {
+        location = new Location() { Lat = (double)lat, Long = (double)lng }; 
+    }
+    return await beerService.GetNearestBeerLocations(location);
 });
 
 app.Run();

@@ -32,8 +32,8 @@ namespace LeedsBeerQuest.Tests.App
                 Assert.That(establishment.Date, Is.EqualTo(DateTime.Parse("2012-11-30T21:58:52+00:00")));
                 Assert.That(establishment.Excerpt, Is.EqualTo("...It's really dark in here!"));
                 Assert.That(establishment.Thumbnail?.OriginalString, Is.EqualTo("http://leedsbeer.info/wp-content/uploads/2012/11/20121129_185815.jpg"));
-                Assert.That(establishment.Location.Lat, Is.EqualTo(53.8007317));
-                Assert.That(establishment.Location.Long, Is.EqualTo(-1.5481764));
+                Assert.That(establishment.Location?.Lat, Is.EqualTo(53.8007317));
+                Assert.That(establishment.Location?.Long, Is.EqualTo(-1.5481764));
                 Assert.That(establishment.Address, Is.EqualTo("23-25 Great George Street, Leeds LS1 3BB"));
                 Assert.That(establishment.Phone, Is.EqualTo("0113 220 4389"));
                 Assert.That(establishment.Twitter, Is.EqualTo("EscobarLeeds"));

@@ -13,8 +13,9 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
     internal class FindMeBeerApiDriver : IFindMeBeerApiDriver
     {
         private readonly HttpClient _client;
+        private Location? _location;
 
-        public BeerEstablishmentLocation[] Establishments { get; private set; }
+        public BeerEstablishmentLocation[]? Establishments { get; private set; }
 
         public FindMeBeerApiDriver(WebApplicationFactory<Program> factory)
         {
@@ -27,9 +28,19 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
             return importData.IsSuccessStatusCode;
         }
 
+        public void SetSearchLocation(Location? location = null)
+        {
+            _location = location;
+        }
+
         public async Task<bool> GetBeerEstablishments()
         {
-            var getBeerResponse = await _client.GetAsync("/beer/nearest-locations");
+            var searchUrl = "/beer/nearest-locations";
+            if (_location != null)
+            {
+                searchUrl = $"{searchUrl}?lat={_location.Lat}&lng={_location.Long}";
+            }
+            var getBeerResponse = await _client.GetAsync(searchUrl);
             if (getBeerResponse.IsSuccessStatusCode)
             {
                 Establishments = await getBeerResponse.Content.ReadFromJsonAsync<BeerEstablishmentLocation[]>();
