@@ -1,5 +1,7 @@
 ﻿using LeedsBeerQuest.App;
-using LeedsBeerQuest.App.Models;
+using LeedsBeerQuest.App.Models.Read;
+using LeedsBeerQuest.App.Models.Write;
+using LocationWriteModel = LeedsBeerQuest.App.Models.Write.Location;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
@@ -28,7 +30,7 @@ namespace LeedsBeerQuest.Data.Mongo
             collection.DeleteMany(Builders<BeerEstablishment>.Filter.Empty);
             collection.InsertMany(establishments);
 
-            var indexKey = Builders<BeerEstablishment>.IndexKeys.Geo2DSphere(v => v.Location.Coordinates);
+            var indexKey = Builders<BeerEstablishment>.IndexKeys.Geo2DSphere("Location.Coordinates");
             collection.Indexes.CreateOne(new CreateIndexModel<BeerEstablishment>(indexKey));
         }
     }

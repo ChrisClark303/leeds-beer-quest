@@ -1,5 +1,6 @@
-﻿
-using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models;
+using LeedsBeerQuest.App.Models.Read;
+using LocationWriteModel = LeedsBeerQuest.App.Models.Write.Location;
 
 namespace LeedsBeerQuest.App
 {
@@ -39,7 +40,7 @@ namespace LeedsBeerQuest.App
                 Date = DateTime.Parse(GetValueForField("date", rowData)),
                 Excerpt = GetValueForField("excerpt", rowData),
                 Thumbnail = new Uri(GetValueForField("thumbnail", rowData)),
-                Location = new Location
+                Location = new LocationWriteModel
                 {
                     Lat = GetDoubleValueForField("lat", rowData),
                     Long = GetDoubleValueForField("lng", rowData)

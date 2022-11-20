@@ -1,5 +1,5 @@
 using LeedsBeerQuest.App;
-using LeedsBeerQuest.App.Models;
+using LeedsBeerQuest.App.Models.Read;
 using Moq;
 
 namespace LeedsBeerQuest.Tests.App

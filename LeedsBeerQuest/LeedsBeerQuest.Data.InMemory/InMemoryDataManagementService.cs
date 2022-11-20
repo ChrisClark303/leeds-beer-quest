@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace LeedsBeerQuest.App

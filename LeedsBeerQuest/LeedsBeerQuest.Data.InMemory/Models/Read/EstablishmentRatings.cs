@@ -1,4 +1,4 @@
-﻿namespace LeedsBeerQuest.App.Models
+﻿namespace LeedsBeerQuest.App.Models.Read
 {
     public struct EstablishmentRatings
     {

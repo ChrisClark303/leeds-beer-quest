@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.App.Services;
 using LeedsBeerQuest.App.Settings;
 using Microsoft.Extensions.Caching.Memory;
@@ -134,7 +134,7 @@ namespace LeedsBeerQuest.Tests.App
             var distanceCalculator = new LocationDistanceCalculator();
             var distance = distanceCalculator.CalculateDistanceInMiles(location1, location2);
 
-            Assert.That(distance, Is.EqualTo(1.245));
+            Assert.That(distance, Is.EqualTo(1.2446));
         }
     }
 }

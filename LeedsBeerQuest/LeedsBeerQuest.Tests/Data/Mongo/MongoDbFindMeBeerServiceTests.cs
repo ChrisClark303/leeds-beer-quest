@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.App.Settings;
 using LeedsBeerQuest.Data.Mongo;
 using Microsoft.Extensions.Options;
@@ -113,7 +113,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var svc = CreateBeerService(queryBuilder: builder.Object);
             await svc.GetNearestBeerLocations(new Location());
 
-            string[] targetFieldNames = new[] { "Name", "Location", "DistanceInMetres" };
+            string[] targetFieldNames = new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" };
             builder.Verify(b => b.CreateProjectionStage(It.Is<string[]>(f =>Is.EquivalentTo(targetFieldNames).ApplyTo(f).IsSuccess), It.IsAny<bool>()));
         }
 

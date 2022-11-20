@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.App.Settings;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -35,7 +35,7 @@ namespace LeedsBeerQuest.App.Services
 
         private IEnumerable<BeerEstablishmentLocation> CreateLocationModel(Location myLocation, BeerEstablishment[] establishments)
         {
-            var startLocation = myLocation.Equals(default(Location)) ? _settings.DefaultSearchLocation : myLocation;
+            var startLocation = myLocation ?? _settings.DefaultSearchLocation;
             var locations = establishments.Select(e => new BeerEstablishmentLocation()
             {
                 Name = e.Name,

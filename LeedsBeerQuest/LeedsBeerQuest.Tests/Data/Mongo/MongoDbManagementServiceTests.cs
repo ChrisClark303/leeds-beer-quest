@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.Data.Mongo;
 using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using MongoDB.Bson.Serialization.Serializers;

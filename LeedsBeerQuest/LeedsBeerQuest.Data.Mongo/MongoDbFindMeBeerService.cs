@@ -1,4 +1,4 @@
-﻿using LeedsBeerQuest.App.Models;
+﻿using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.App.Services;
 using LeedsBeerQuest.App.Settings;
 using Microsoft.Extensions.Options;
@@ -33,7 +33,7 @@ namespace LeedsBeerQuest.Data.Mongo
             var startLocation = myLocation ?? _settings.DefaultSearchLocation;
             var pipeline = _queryBuilder
                 .CreateGeoNearDocument(startLocation.Long, startLocation.Lat, "Location.Coordinates", "DistanceInMetres")
-                .CreateProjectionStage(new[] { "Name", "Location", "DistanceInMetres" }, true)
+                .CreateProjectionStage(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, true)
                 .CreateLimitStage(_settings.DefaultPageSize)
                 .BuildPipeline();
             IAsyncCursor<BeerEstablishmentLocation> cursor = collection.Aggregate(pipeline);
