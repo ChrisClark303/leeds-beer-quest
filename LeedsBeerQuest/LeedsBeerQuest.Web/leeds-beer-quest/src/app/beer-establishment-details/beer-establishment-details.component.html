@@ -1,0 +1,28 @@
+<!--<div *ngIf="establishment" class="card-container">-->
+<span *ngIf="selectedEstablishment" class="card">
+     <div class="card-container">
+        <div class="card highlight-card card-small">
+            {{selectedEstablishment.name}}
+        </div>
+        <div class="card highlight-card card-small">
+            {{selectedEstablishment.excerpt}}
+        </div>
+    </div>
+
+    <div class="card-container">
+        <div class="card highlight-card card-small">
+            {{selectedEstablishment.address}}
+        </div>
+        <div class="card highlight-card card-small">
+            {{selectedEstablishment.phone}}
+        </div>
+        <div class="card highlight-card card-small">
+            <a href=selectedEstablishment.url>{{selectedEstablishment.url}}</a>
+        </div>
+    </div>
+    <div *ngIf="selectedEstablishment.twitter" class="card-container">
+        <div class="card highlight-card card-small">
+            Twitter: {{selectedEstablishment.twitter}}
+        </div>
+    </div>
+</span>

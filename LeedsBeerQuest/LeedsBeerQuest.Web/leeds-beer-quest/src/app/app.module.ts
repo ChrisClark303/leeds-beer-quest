@@ -5,17 +5,23 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BeerMapComponent } from './beer-map/beer-map.component';
 import { HttpClientModule } from '@angular/common/http';
+import { BeerEstablishmentDetailsComponent } from './beer-establishment-details/beer-establishment-details.component';
+import { FormsModule } from '@angular/forms';
+import { FindMeBeerComponent } from './find-me-beer/find-me-beer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BeerMapComponent
+    BeerMapComponent,
+    BeerEstablishmentDetailsComponent,
+    FindMeBeerComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     GoogleMapsModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

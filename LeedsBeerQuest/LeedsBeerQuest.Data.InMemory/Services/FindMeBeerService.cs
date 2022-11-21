@@ -18,6 +18,11 @@ namespace LeedsBeerQuest.App.Services
             _settings = settings.Value;
         }
 
+        public Task<BeerEstablishment> GetBeerEstablishmentByName(string establishmentName)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");

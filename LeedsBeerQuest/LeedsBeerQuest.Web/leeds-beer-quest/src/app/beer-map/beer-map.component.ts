@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps'
+import { BeerEstablishment } from '../beer-establishment';
 import { BeerEstablishmentLocation } from '../beer-establishment-location';
 import { BeerQuestService } from '../beer-quest.service';
 
@@ -15,6 +16,9 @@ export class BeerMapComponent implements OnInit {
   markers:Array<any> = new Array<any>();
   center: google.maps.LatLngLiteral;
   infoContent: '';
+
+  @Output() selectedEstablishment: BeerEstablishment;
+  @Output() establishmentSelected = new EventEmitter<string>();
 
   constructor(private beerQuestService:BeerQuestService) { }
 
@@ -33,7 +37,7 @@ export class BeerMapComponent implements OnInit {
 
   getLocations()
   {
-    this.beerQuestService.getLocationsNearMe()
+    this.beerQuestService.getEstablishmentsNearMe()
     .subscribe(result => {
       result.forEach((bl, i) => 
         {
@@ -60,7 +64,13 @@ export class BeerMapComponent implements OnInit {
   }
 
   showMarkerInformation(marker: MapMarker, content:any) {
-    console.log(content);
+    console.log("Content: " + content);
+    // this.beerQuestService.getEstablishmentDetailsByName(content)
+    // .subscribe(result => {
+    //   this.selectedEstablishment = result;
+    //   console.log("establishment: " + result.name)
+    // });
+    this.establishmentSelected.emit(content);
     this.infoContent = content;
     this.info.open(marker);
   }
