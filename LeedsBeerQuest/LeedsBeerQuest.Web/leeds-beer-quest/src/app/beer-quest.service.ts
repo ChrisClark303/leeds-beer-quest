@@ -21,7 +21,7 @@ export class BeerQuestService {
     }
 
     getEstablishmentsNearMe(): Observable<BeerEstablishmentLocation[]> {
-      return this.get<BeerEstablishmentLocation[]>("/beer/nearest-locations");
+      return this.get<BeerEstablishmentLocation[]>("/beer/nearest-establishments");
     }
 
     getEstablishmentDetailsByName(establishmentName:String) {
