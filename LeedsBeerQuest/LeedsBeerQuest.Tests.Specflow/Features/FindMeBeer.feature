@@ -39,4 +39,8 @@ Scenario: Fetch details of an establishment by name
 	| Name          | Category    | Location              | Address                              | Phone         | Twitter      | Thumbnail                                                                | Excerpt                                                                                 | Url                           | Date                  | Tags                                                 | Value | Beer | Atmosphere | Amenities |
 	| The Faversham | Pub reviews | 53.8043518,-1.5573227 | 1-5 Springfield Mount, Leeds LS2 9NG | 0113 243 1481 | thefaversham | http://leedsbeer.info/wp-content/uploads/2013/09/IMG_20130910_174903.jpg | Surprising little upmarket craft beer house right on the edge of the University campus. | http://leedsbeer.info/?p=1939 | 9/15/2013 10:56:44 AM | beer garden,coffee,dance floor,food,live music,sofas | 3     | 4    | 4          | 4         |
 
-		
+
+Scenario: Attempt to fetch details of an establishment that does not exist
+	Given I provide 'Non-existing establishment' as the name of an establishment
+	When I request the establishment details
+	Then a NoContent response should be returned
