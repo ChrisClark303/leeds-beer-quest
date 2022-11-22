@@ -14,8 +14,10 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
     {
         private readonly HttpClient _client;
         private Location? _location;
+        private string? _establishmentName;
 
         public BeerEstablishmentLocation[]? Establishments { get; private set; }
+        public BeerEstablishment? EstablishmentByName { get; private set; }
 
         public FindMeBeerApiDriver(WebApplicationFactory<Program> factory)
         {
@@ -33,6 +35,11 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
             _location = location;
         }
 
+        public void SetSearchEstablishmentName(string establishmentName)
+        {
+            _establishmentName = establishmentName;
+        }
+
         public async Task<bool> GetBeerEstablishments()
         {
             var searchUrl = "/beer/nearest-locations";
@@ -40,13 +47,43 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
             {
                 searchUrl = $"{searchUrl}?lat={_location.Lat}&lng={_location.Long}";
             }
-            var getBeerResponse = await _client.GetAsync(searchUrl);
-            if (getBeerResponse.IsSuccessStatusCode)
+            return await GetApiResponse<BeerEstablishmentLocation[]>(searchUrl, response =>
             {
-                Establishments = await getBeerResponse.Content.ReadFromJsonAsync<BeerEstablishmentLocation[]>();
+                Establishments = response;
+            });
+            //var getBeerResponse = await _client.GetAsync(searchUrl);
+            //if (getBeerResponse.IsSuccessStatusCode)
+            //{
+            //    Establishments = await getBeerResponse.Content.ReadFromJsonAsync<BeerEstablishmentLocation[]>();
+            //}
+
+            //return getBeerResponse.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> GetBeerEstablishmentByName()
+        {
+            return await GetApiResponse<BeerEstablishment>($"/beer/{_establishmentName}", response =>
+            {
+                EstablishmentByName = response;
+            });
+            //var getBeerByNameResponse = await _client.GetAsync($"/beer/{_establishmentName}");
+            //if (getBeerByNameResponse.IsSuccessStatusCode)
+            //{
+            //    EstablishmentByName = await getBeerByNameResponse.Content.ReadFromJsonAsync<BeerEstablishment>();
+            //}
+
+            //return getBeerByNameResponse.IsSuccessStatusCode;
+        }
+
+        private async Task<bool> GetApiResponse<TResponseType>(string url, Action<TResponseType> action)
+        {
+            var getBeerByNameResponse = await _client.GetAsync(url);
+            if (getBeerByNameResponse.IsSuccessStatusCode)
+            {
+                action(await getBeerByNameResponse.Content.ReadFromJsonAsync<TResponseType>());
             }
 
-            return getBeerResponse.IsSuccessStatusCode;
+            return getBeerByNameResponse.IsSuccessStatusCode;
         }
     }
 }

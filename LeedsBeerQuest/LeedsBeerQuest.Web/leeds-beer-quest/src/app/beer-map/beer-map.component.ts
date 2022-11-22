@@ -54,7 +54,7 @@ export class BeerMapComponent implements OnInit {
         lng: location.location.long
       },
       label: {
-        color: 'white',
+        color: 'black',
         text: `${index}: ${location.name} (${location.distance} mls)`,
       },
       title: location.name,

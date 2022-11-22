@@ -33,6 +33,7 @@ namespace LeedsBeerQuest.Data.Mongo
 
             var filter = Builders<BeerEstablishment>.Filter.Eq(f => f.Name, establishmentName);
             var projection = Builders<BeerEstablishment>.Projection
+                .Exclude("Location._t")
                 .Exclude("Location.Coordinates")
                 .Exclude("_id");
             var options = new FindOptions<BeerEstablishment> { Projection = projection };
