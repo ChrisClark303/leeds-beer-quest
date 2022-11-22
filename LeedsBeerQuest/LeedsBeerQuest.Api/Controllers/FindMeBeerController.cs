@@ -18,14 +18,31 @@ namespace LeedsBeerQuest.Api.Controllers
         }
 
         [HttpGet("nearest-establishments")]
-        public async Task<BeerEstablishmentLocation[]> GetNearestEstablishments(double? lat = null, double? lng = null)
+        [Produces(typeof(BeerEstablishmentLocation[]))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetNearestEstablishments(double? lat = null, double? lng = null)
         {
             Location? location = null;
             if (lat != null && lng != null)
             {
                 location = new Location() { Lat = (double)lat, Long = (double)lng };
             }
-            return await _findBeerService.GetNearestBeerLocations(location);
+            var locations = await _findBeerService.GetNearestBeerLocations(location);
+            return Ok(locations);
+        }
+
+        [HttpGet("{establishmentName}")]
+        [Produces(typeof(BeerEstablishment))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetBeerEstablishmentByName(string establishmentName)
+        {
+            var beerEstablishment = await _findBeerService.GetBeerEstablishmentByName(establishmentName);
+            if (beerEstablishment == null)
+            {
+                return NoContent();
+            }
+            return Ok(beerEstablishment);
         }
     }
 }
