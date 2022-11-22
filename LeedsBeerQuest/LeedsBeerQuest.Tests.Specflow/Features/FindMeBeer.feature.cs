@@ -243,6 +243,69 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Fetch details of an establishment by name")]
+        public void FetchDetailsOfAnEstablishmentByName()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Fetch details of an establishment by name", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 35
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 36
+ testRunner.Given("I provide \'The Faversham\' as the name of an establishment", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 37
+ testRunner.When("I request the establishment details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Name",
+                            "Category",
+                            "Location",
+                            "Address",
+                            "Phone",
+                            "Twitter",
+                            "Thumbnail",
+                            "Excerpt",
+                            "Url",
+                            "Date",
+                            "Tags",
+                            "Value",
+                            "Beer",
+                            "Atmosphere",
+                            "Amenities"});
+                table3.AddRow(new string[] {
+                            "The Faversham",
+                            "Pub reviews",
+                            "53.8043518,-1.5573227",
+                            "1-5 Springfield Mount, Leeds LS2 9NG",
+                            "0113 243 1481",
+                            "thefaversham",
+                            "http://leedsbeer.info/wp-content/uploads/2013/09/IMG_20130910_174903.jpg",
+                            "Surprising little upmarket craft beer house right on the edge of the University c" +
+                                "ampus.",
+                            "http://leedsbeer.info/?p=1939",
+                            "9/15/2013 10:56:44 AM",
+                            "beer garden,coffee,dance floor,food,live music,sofas",
+                            "3",
+                            "4",
+                            "4",
+                            "4"});
+#line 38
+ testRunner.Then("all details about that establishment should be returned", ((string)(null)), table3, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

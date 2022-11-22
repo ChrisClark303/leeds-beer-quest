@@ -30,7 +30,7 @@ app.UseCors(options =>
     options.AllowAnyMethod();
 });
 
-app.MapControllers();
+//app.MapControllers();
 app.MapPatch("/data-management/import", async ([FromServices] DataImporter importer) =>
 {
     await importer.Import();
@@ -44,6 +44,10 @@ app.MapGet("/beer/nearest-locations", async ([FromServices] IFindMeBeerService b
         location = new Location() { Lat = (double)lat, Long = (double)lng }; 
     }
     return await beerService.GetNearestBeerLocations(location);
+});
+app.MapGet("/beer/{establishmentName}", async ([FromServices] IFindMeBeerService beerService, string establishmentName) =>
+{
+    return await beerService.GetBeerEstablishmentByName(establishmentName);
 });
 
 app.Run();

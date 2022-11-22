@@ -35,6 +35,8 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             coll.Setup(c => c.Aggregate<BeerEstablishmentLocation>(It.IsAny<PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation>>(),
                 It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
                 .Returns(new Mock<IAsyncCursor<BeerEstablishmentLocation>>().Object);
+            coll.Setup(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Mock<IAsyncCursor<BeerEstablishment>>().Object);
             return coll;
         }
 
@@ -48,6 +50,18 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             queryBuilder.Setup(q => q.CreateLimitStage(It.IsAny<int>()))
                 .Returns(queryBuilder.Object);
             return queryBuilder;
+        }
+
+        private Mock<IAsyncCursor<TResult>> CreateMockResultsCursor<TResult>(TResult[] results)
+        {
+            var cursor = new Mock<IAsyncCursor<TResult>>();
+            cursor.Setup(c => c.Current)
+                .Returns(results);
+            cursor.SetupSequence(c => c.MoveNextAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true)
+                .ReturnsAsync(false);
+
+            return cursor;
         }
 
         [Test]
@@ -170,21 +184,77 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         [Test]
         public async Task GetNearestBeerLocations_Returns_List_FromCollectionAggregate()
         {
+            BeerEstablishmentLocation[] results = new[] { new BeerEstablishmentLocation() };
+            var cursor = CreateMockResultsCursor(results);
+
             var collection = new Mock<IMongoCollection<BeerEstablishment>>();
-            var cursor = new Mock<IAsyncCursor<BeerEstablishmentLocation>>();
             collection.Setup(c => c.Aggregate<BeerEstablishmentLocation>(It.IsAny<PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation>>(), 
                 It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
                 .Returns(cursor.Object);
-            BeerEstablishmentLocation[] results = new[] { new BeerEstablishmentLocation() };
-            cursor.Setup(c => c.Current)
-                .Returns(results);
-            cursor.SetupSequence(c => c.MoveNextAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(true)
-                .ReturnsAsync(false);
+            
             var svc = CreateBeerService(collection: collection);
             var locations = await svc.GetNearestBeerLocations(new Location());
 
             Assert.That(locations, Is.EquivalentTo(results));
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_RetrievesConnectionToDatabase_FromDatabaseConnectionFactory()
+        {
+            var dbConnFactory = new Mock<IMongoDatabaseConnectionFactory>();
+
+            var svc = CreateBeerService(dbConnFactory);
+            await svc.GetBeerEstablishmentByName(string.Empty);
+
+            dbConnFactory.Verify(f => f.ConnectToDatabase());
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_RetrievesVenuesCollection_FromDatabase()
+        {
+            var database = new Mock<IMongoDatabase>();
+
+            var svc = CreateBeerService(database: database);
+            await svc.GetBeerEstablishmentByName(string.Empty);
+
+            database.Verify(f => f.GetCollection<BeerEstablishment>("Venues", It.IsAny<MongoCollectionSettings>()));
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync()
+        {
+            var collection = CreateMockCollection();
+
+            var svc = CreateBeerService(collection: collection);
+            await svc.GetBeerEstablishmentByName(string.Empty);
+
+            collection.Verify(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync_WithProjectionOptionsToRemoveIdField()
+        {
+            var collection = CreateMockCollection();
+
+            var svc = CreateBeerService(collection: collection);
+            await svc.GetBeerEstablishmentByName(string.Empty);
+
+            collection.Verify(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.Is<FindOptions<BeerEstablishment>>(o => o.Projection != null), It.IsAny<CancellationToken>()));
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_Returns_Results_FromFindAsync()
+        {
+            var results = new[] { new BeerEstablishment() };
+            var cursor = CreateMockResultsCursor(results);
+            var collection = CreateMockCollection();
+            collection.Setup(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(cursor.Object);
+
+            var svc = CreateBeerService(collection: collection);
+            var establishment = await svc.GetBeerEstablishmentByName(string.Empty);
+
+            Assert.That(establishment, Is.EqualTo(results.First()));
         }
     }
 }

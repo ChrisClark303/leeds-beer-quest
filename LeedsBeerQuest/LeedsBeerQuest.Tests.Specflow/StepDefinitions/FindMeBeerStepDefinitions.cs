@@ -30,9 +30,6 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
             _driver.SetSearchLocation(null);
         }
 
-        //53.794569064158246
-        //-1.5475488152553165
-
         [Given(@"I provide a latitude of (.*) and a longitiude of (.*)")]
         public void GivenIProvideALatitudeAndLongitude(double lat, double lng)
         {
@@ -60,6 +57,40 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
                 Assert.AreEqual(Double.Parse(row["Lon"]), establishment.Location?.Long);
                 Assert.AreEqual(Double.Parse(row["Distance"]), establishment.Distance, 0.001);
             }
+        }
+
+        [Given(@"I provide '(.*)' as the name of an establishment")]
+        public void GivenIProvideAsTheNameOfAnEstablishment(string establishmentName)
+        {
+            _driver.SetSearchEstablishmentName(establishmentName);
+        }
+
+        [When(@"I request the establishment details")]
+        public async Task WhenIRequestTheEstablishmentDetails()
+        {
+            var gotBeer = await _driver.GetBeerEstablishmentByName();
+            Assert.True(gotBeer);
+        }
+
+        [Then(@"all details about that establishment should be returned")]
+        public void ThenAllDetailsAboutThatEstablishmentShouldBeReturned(Table table)
+        {
+            var e = _driver.EstablishmentByName;
+            var dataRow = table.Rows.First();
+            dataRow[nameof(e.Name)] = e.Name;
+            dataRow[nameof(e.Category)] = e.Category;
+            dataRow[nameof(e.Location)] = $"{e.Location.Lat},{e.Location.Long}";
+            dataRow[nameof(e.Address)] = e.Address;
+            dataRow[nameof(e.Phone)] = e.Phone;
+            dataRow[nameof(e.Twitter)] = e.Twitter;
+            dataRow[nameof(e.Thumbnail)] = e.Thumbnail.ToString();
+            dataRow[nameof(e.Excerpt)] = e.Excerpt;
+            dataRow[nameof(e.Date)] = e.Date.ToString();
+            dataRow[nameof(e.Tags)] = string.Join(",", e.Tags);
+            dataRow[nameof(e.Ratings.Value)] = e.Ratings.Value.ToString();
+            dataRow[nameof(e.Ratings.Amenities)] = e.Ratings.Amenities.ToString();
+            dataRow[nameof(e.Ratings.Atmosphere)] = e.Ratings.Atmosphere.ToString();
+            dataRow[nameof(e.Ratings.Beer)] = e.Ratings.Beer.ToString();
         }
     }
 }

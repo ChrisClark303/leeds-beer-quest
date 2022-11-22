@@ -2,6 +2,7 @@
 using LeedsBeerQuest.App.Services;
 using LeedsBeerQuest.App.Settings;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Operations;
 using System;
@@ -23,6 +24,21 @@ namespace LeedsBeerQuest.Data.Mongo
             _connFactory = connFactory;
             _queryBuilder = queryBuilder;
             _settings = settings.Value;
+        }
+
+        public async Task<BeerEstablishment> GetBeerEstablishmentByName(string establishmentName)
+        {
+            var database = _connFactory.ConnectToDatabase();
+            var collection = database.GetCollection<BeerEstablishment>("Venues");
+
+            var filter = Builders<BeerEstablishment>.Filter.Eq(f => f.Name, establishmentName);
+            var projection = Builders<BeerEstablishment>.Projection
+                .Exclude("Location._t")
+                .Exclude("Location.Coordinates")
+                .Exclude("_id");
+            var options = new FindOptions<BeerEstablishment> { Projection = projection };
+            var resultsCursor = await collection.FindAsync(filter, options);
+            return await resultsCursor.FirstOrDefaultAsync();
         }
 
         public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)

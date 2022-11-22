@@ -115,26 +115,52 @@ namespace LeedsBeerQuest.Tests.App
 
             Assert.That(establishments.Select(e => e.Distance), Is.EqualTo(new[] { 1, 2, 3, 4 }));
         }
-    }
-
-    internal class LocationDistanceCalculatorTests
-    {
-        //        Input : Latitude 1: 53.32055555555556
-        //        Latitude 2: 53.31861111111111
-        //        Longitude 1: -1.7297222222222221
-        //        Longitude 2: -1.6997222222222223
-        //        Output: Distance is: 2.0043678382716137 Kilometers / 1.609344
 
         [Test]
-        public void CalculateDistanceInMiles_CorrectlyCalculatesDistanceBetweenTwoLocations()
+        public async Task GetBeerEstablishmentByName_CacheReturnsNull_ReturnsNull()
         {
-            var location1 = new Location() { Lat = 53.32055555555556, Long = -1.7297222222222221 };
-            var location2 = new Location() { Lat = 53.31861111111111, Long = -1.6997222222222223 };
+            var memCache = new MemoryCache(new MemoryCacheOptions());
 
-            var distanceCalculator = new LocationDistanceCalculator();
-            var distance = distanceCalculator.CalculateDistanceInMiles(location1, location2);
+            var findMeBeer = CreateService(memCache);
+            var establishment = await findMeBeer.GetBeerEstablishmentByName(string.Empty);
 
-            Assert.That(distance, Is.EqualTo(1.2446));
+            Assert.That(establishment, Is.Null);
+        }
+
+        [Test]
+        public async Task GetNearestBeerLocations_ReturnsEstablishmentWithSpecifiedName()
+        {
+            var memCache = new MemoryCache(new MemoryCacheOptions());
+            var cachedEstablishments = new[]
+            {
+                new BeerEstablishment() { Name = "establishment1"},
+                new BeerEstablishment() { Name = "establishment2"},
+                new BeerEstablishment() { Name = "establishment3"}
+            };
+            memCache.Set("establishments", cachedEstablishments);
+            
+            var findMeBeer = CreateService(memCache);
+            var establishment = await findMeBeer.GetBeerEstablishmentByName("establishment2");
+            
+            Assert.That(establishment, Is.EqualTo(cachedEstablishments[1]));
+        }
+
+        [Test]
+        public async Task GetNearestBeerLocations_EstablishmentDoesNotExistInCache_ReturnsNull()
+        {
+            var memCache = new MemoryCache(new MemoryCacheOptions());
+            var cachedEstablishments = new[]
+            {
+                new BeerEstablishment() { Name = "establishment1"},
+                new BeerEstablishment() { Name = "establishment2"},
+                new BeerEstablishment() { Name = "establishment3"}
+            };
+            memCache.Set("establishments", cachedEstablishments);
+
+            var findMeBeer = CreateService(memCache);
+            var establishment = await findMeBeer.GetBeerEstablishmentByName("establishment4");
+
+            Assert.That(establishment, Is.Null);
         }
     }
 }
