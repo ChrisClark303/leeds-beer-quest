@@ -2,6 +2,7 @@ using Gherkin.CucumberMessages.Types;
 using LeedsBeerQuest.Tests.Specflow.Drivers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using NUnit.Framework;
+using System.Net;
 using System.Net.Http.Json;
 using TechTalk.SpecFlow.Bindings;
 
@@ -91,6 +92,13 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
             dataRow[nameof(e.Ratings.Amenities)] = e.Ratings.Amenities.ToString();
             dataRow[nameof(e.Ratings.Atmosphere)] = e.Ratings.Atmosphere.ToString();
             dataRow[nameof(e.Ratings.Beer)] = e.Ratings.Beer.ToString();
+        }
+
+        [Then(@"a (.*) response should be returned")]
+        public void ThenAResponseShouldBeReturned(string responseType)
+        {
+            var statusCode = Enum.Parse<HttpStatusCode>(responseType);
+            Assert.That(_driver.LastRequestStatusCode, Is.EqualTo(statusCode));
         }
     }
 }

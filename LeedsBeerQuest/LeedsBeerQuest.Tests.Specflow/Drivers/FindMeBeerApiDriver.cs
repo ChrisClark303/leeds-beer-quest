@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
 
         public BeerEstablishmentLocation[]? Establishments { get; private set; }
         public BeerEstablishment? EstablishmentByName { get; private set; }
+        public HttpStatusCode LastRequestStatusCode { get; private set; }
 
         public FindMeBeerApiDriver(WebApplicationFactory<Program> factory)
         {
@@ -42,7 +44,7 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
 
         public async Task<bool> GetBeerEstablishments()
         {
-            var searchUrl = "/beer/nearest-locations";
+            var searchUrl = "/beer/nearest-establishments";
             if (_location != null)
             {
                 searchUrl = $"{searchUrl}?lat={_location.Lat}&lng={_location.Long}";
@@ -51,13 +53,6 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
             {
                 Establishments = response;
             });
-            //var getBeerResponse = await _client.GetAsync(searchUrl);
-            //if (getBeerResponse.IsSuccessStatusCode)
-            //{
-            //    Establishments = await getBeerResponse.Content.ReadFromJsonAsync<BeerEstablishmentLocation[]>();
-            //}
-
-            //return getBeerResponse.IsSuccessStatusCode;
         }
 
         public async Task<bool> GetBeerEstablishmentByName()
@@ -66,18 +61,12 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
             {
                 EstablishmentByName = response;
             });
-            //var getBeerByNameResponse = await _client.GetAsync($"/beer/{_establishmentName}");
-            //if (getBeerByNameResponse.IsSuccessStatusCode)
-            //{
-            //    EstablishmentByName = await getBeerByNameResponse.Content.ReadFromJsonAsync<BeerEstablishment>();
-            //}
-
-            //return getBeerByNameResponse.IsSuccessStatusCode;
         }
 
-        private async Task<bool> GetApiResponse<TResponseType>(string url, Action<TResponseType> action)
+        private async Task<bool> GetApiResponse<TResponseType>(string url, Action<TResponseType?> action)
         {
             var getBeerByNameResponse = await _client.GetAsync(url);
+            LastRequestStatusCode = getBeerByNameResponse.StatusCode;
             if (getBeerByNameResponse.IsSuccessStatusCode)
             {
                 action(await getBeerByNameResponse.Content.ReadFromJsonAsync<TResponseType>());

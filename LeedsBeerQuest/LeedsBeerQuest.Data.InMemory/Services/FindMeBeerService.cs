@@ -18,7 +18,7 @@ namespace LeedsBeerQuest.App.Services
             _settings = settings.Value;
         }
 
-        public async Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
+        public async Task<BeerEstablishment> GetBeerEstablishmentByName(string establishmentName)
         {
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");
             if (establishments == null)

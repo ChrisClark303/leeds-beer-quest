@@ -1,4 +1,5 @@
 ﻿using LeedsBeerQuest.App.Models.Read;
+using System.Net;
 
 namespace LeedsBeerQuest.Tests.Specflow.Drivers
 {
@@ -6,6 +7,7 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
     {
         BeerEstablishmentLocation[] Establishments { get; }
         BeerEstablishment? EstablishmentByName { get; }
+        HttpStatusCode LastRequestStatusCode { get; }
 
         void SetSearchLocation(Location? location = null);
         Task<bool> GetBeerEstablishments();

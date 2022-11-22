@@ -1,5 +1,5 @@
-<!--<div *ngIf="establishment" class="card-container">-->
-<span *ngIf="selectedEstablishment" class="card">
+
+<span *ngIf="selectedEstablishment" class="card" style="background-image: url('{{selectedEstablishment.thumbnail}}'); background-size: 100%;">
      <div class="card-container">
         <div class="card highlight-card card-small">
             {{selectedEstablishment.name}}
@@ -25,4 +25,12 @@
             Twitter: {{selectedEstablishment.twitter}}
         </div>
     </div>
+    <div class="card-container">
+        <div *ngFor="let tag of selectedEstablishment.tags" class="card highlight-card card-small">
+            {{tag}}
+        </div>
+    </div>
+
+
+
 </span>
