@@ -4,6 +4,6 @@ namespace LeedsBeerQuest.App
 {
     public interface IDataManagementService
     {
-        void ImportData(BeerEstablishment[] establishments);
+        Task ImportData(BeerEstablishment[] establishments);
     }
 }

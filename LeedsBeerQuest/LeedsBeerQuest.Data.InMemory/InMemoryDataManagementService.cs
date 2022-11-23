@@ -12,9 +12,10 @@ namespace LeedsBeerQuest.App
             _memCache = memCache;
         }
 
-        public void ImportData(BeerEstablishment[] establishments)
+        public Task ImportData(BeerEstablishment[] establishments)
         {
             _memCache.Set("establishments", establishments, TimeSpan.FromDays(7));
+            return Task.CompletedTask;
         }
     }
 }

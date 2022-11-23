@@ -5,9 +5,9 @@ using MongoDB.Driver;
 //TODO : Extract operation names to consts
 public class MongoQueryBuilder : IMongoQueryBuilder
 {
-    private List<BsonDocument> _documents = new List<BsonDocument>();
+    private readonly List<BsonDocument> _documents = new List<BsonDocument>();
 
-    public IMongoQueryBuilder CreateGeoNearDocument(double lng, double lat, string keyName, string distanceFieldName)
+    public IMongoQueryBuilder WithAggregationGeoNear(double lng, double lat, string keyName, string distanceFieldName)
     {
         var doc = new BsonDocument("$geoNear",
             new BsonDocument
@@ -24,13 +24,13 @@ public class MongoQueryBuilder : IMongoQueryBuilder
                     }    },
                     { "key", keyName },
                     { "distanceField", distanceFieldName },
-                   // { "query", CreateNotEqualQuery("Category", "Closed venues") } //TODO : pass in query details
+                   // { "query", WithNotEqualQuery("Category", "Closed venues") } //TODO : pass in query details
             });
         _documents.Add(doc);
         return this;
     }
 
-    public IMongoQueryBuilder CreateNotEqualQuery(string fieldName, string fieldValue)
+    public IMongoQueryBuilder WithNotEqualQuery(string fieldName, string fieldValue)
     {
         var doc = new BsonDocument(fieldName, new BsonDocument("$ne", fieldValue));
         _documents.Add(doc);
@@ -38,22 +38,20 @@ public class MongoQueryBuilder : IMongoQueryBuilder
         return this;
     }
 
-    public IMongoQueryBuilder CreateProjectionStage(string[] fieldsToInclude, bool excludeId = false)
+    public IMongoQueryBuilder WithAggregationProjection(string[] fieldsToInclude, bool excludeId = false)
     {
         var projectedFieldDict = new Dictionary<string, int>(fieldsToInclude.Select(f => new KeyValuePair<string, int>(f, 1)));
         if (excludeId)
         {
             projectedFieldDict.Add("_id", 0);
-        };
+        }
 
-        var doc = new BsonDocument("$project",
-            new BsonDocument(projectedFieldDict)
-        );
+        var doc = new BsonDocument("$project", new BsonDocument(projectedFieldDict));
         _documents.Add(doc);
         return this;
     }
 
-    public IMongoQueryBuilder CreateLimitStage(int pageSize)
+    public IMongoQueryBuilder WithAggregationLimit(int pageSize)
     {
         var doc = new BsonDocument("$limit", pageSize);
         _documents.Add(doc);
@@ -62,12 +60,14 @@ public class MongoQueryBuilder : IMongoQueryBuilder
 
     public PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> BuildPipeline()
     {
+        //Ensure the implicit cast from BsonDocument[] to PipelineDefinition is triggered
         PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> pipeline = Build();
         return pipeline;
     }
 
     public BsonDocument[] Build()
     {
+        //TODO : Reset the documents array at this point?
         return _documents.ToArray();
     }
 }

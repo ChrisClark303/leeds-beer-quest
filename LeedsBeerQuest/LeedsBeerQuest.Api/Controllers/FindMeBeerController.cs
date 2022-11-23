@@ -17,20 +17,40 @@ namespace LeedsBeerQuest.Api.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Returns the location details of establishments nearest to the specified coordinates, in ascending order of distance.
+        /// If no coordinates are supplied, a default search location is used instead.
+        /// </summary>
+        /// <param name="lat">The latitude coordinate to use as the search location</param>
+        /// <param name="lng">The longitude coordinate to use as the search location</param>
+        /// <returns></returns>
         [HttpGet("nearest-establishments")]
         [Produces(typeof(BeerEstablishmentLocation[]))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetNearestEstablishments(double? lat = null, double? lng = null)
         {
+            Location? location = CreateLocationModel(lat, lng);
+            var locations = await _findBeerService.GetNearestBeerLocations(location);
+            return Ok(locations);
+        }
+
+        private static Location? CreateLocationModel(double? lat, double? lng)
+        {
+            //TODO : Should this be in the service?
             Location? location = null;
             if (lat != null && lng != null)
             {
                 location = new Location() { Lat = (double)lat, Long = (double)lng };
             }
-            var locations = await _findBeerService.GetNearestBeerLocations(location);
-            return Ok(locations);
+
+            return location;
         }
 
+        /// <summary>
+        /// Returns full details of the beer establishment specified by name in the route.
+        /// </summary>
+        /// <param name="establishmentName">The name of the establishment to search for</param>
+        /// <returns></returns>
         [HttpGet("{establishmentName}")]
         [Produces(typeof(BeerEstablishment))]
         [ProducesResponseType(StatusCodes.Status200OK)]

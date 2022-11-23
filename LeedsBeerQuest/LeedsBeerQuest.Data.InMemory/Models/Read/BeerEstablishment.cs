@@ -13,7 +13,7 @@ namespace LeedsBeerQuest.App.Models.Read
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public string? Twitter { get; set; }
-        public EstablishmentRatings Ratings { get; set; }
+        public EstablishmentRatings? Ratings { get; set; }
         public string[]? Tags { get; set; }
     }
 }

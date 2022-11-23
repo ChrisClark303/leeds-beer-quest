@@ -19,7 +19,7 @@ namespace LeedsBeerQuest.App
         {
             string dataString = await GetBeerQuestData();
             var parsedEstablishments = _dataParser.Parse(dataString);
-            _dataManagementService.ImportData(parsedEstablishments);
+            await _dataManagementService.ImportData(parsedEstablishments);
         }
 
         private async Task<string> GetBeerQuestData()

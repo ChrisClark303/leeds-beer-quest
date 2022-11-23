@@ -43,11 +43,11 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         private Mock<IMongoQueryBuilder> CreateMockQueryBuilder()
         {
             var queryBuilder = new Mock<IMongoQueryBuilder>();
-            queryBuilder.Setup(q => q.CreateGeoNearDocument(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<string>()))
+            queryBuilder.Setup(q => q.WithAggregationGeoNear(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.CreateProjectionStage(It.IsAny<string[]>(), It.IsAny<bool>()))
+            queryBuilder.Setup(q => q.WithAggregationProjection(It.IsAny<string[]>(), It.IsAny<bool>()))
                 .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.CreateLimitStage(It.IsAny<int>()))
+            queryBuilder.Setup(q => q.WithAggregationLimit(It.IsAny<int>()))
                 .Returns(queryBuilder.Object);
             return queryBuilder;
         }
@@ -94,7 +94,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var svc = CreateBeerService(queryBuilder: builder.Object);
             await svc.GetNearestBeerLocations(new Location() { Long = -1, Lat = 51});
 
-            builder.Verify(b => b.CreateGeoNearDocument(-1, 51, It.IsAny<string>(), It.IsAny<string>()));
+            builder.Verify(b => b.WithAggregationGeoNear(-1, 51, It.IsAny<string>(), It.IsAny<string>()));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var svc = CreateBeerService(queryBuilder: builder.Object, defaultSearchLocation: new Location() { Long = -2, Lat = 52 });
             await svc.GetNearestBeerLocations(default);
 
-            builder.Verify(b => b.CreateGeoNearDocument(-2, 52, It.IsAny<string>(), It.IsAny<string>()));
+            builder.Verify(b => b.WithAggregationGeoNear(-2, 52, It.IsAny<string>(), It.IsAny<string>()));
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var svc = CreateBeerService(queryBuilder: builder.Object);
             await svc.GetNearestBeerLocations(new Location());
 
-            builder.Verify(b => b.CreateGeoNearDocument(It.IsAny<double>(), It.IsAny<double>(), "Location.Coordinates", "DistanceInMetres"));
+            builder.Verify(b => b.WithAggregationGeoNear(It.IsAny<double>(), It.IsAny<double>(), "Location.Coordinates", "DistanceInMetres"));
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             await svc.GetNearestBeerLocations(new Location());
 
             string[] targetFieldNames = new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" };
-            builder.Verify(b => b.CreateProjectionStage(It.Is<string[]>(f =>Is.EquivalentTo(targetFieldNames).ApplyTo(f).IsSuccess), It.IsAny<bool>()));
+            builder.Verify(b => b.WithAggregationProjection(It.Is<string[]>(f =>Is.EquivalentTo(targetFieldNames).ApplyTo(f).IsSuccess), It.IsAny<bool>()));
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             await svc.GetNearestBeerLocations(new Location());
 
             string[] targetFieldNames = new[] { "Name", "Location", "DistanceInMetres" };
-            builder.Verify(b => b.CreateProjectionStage(It.IsAny<string[]>(), true));
+            builder.Verify(b => b.WithAggregationProjection(It.IsAny<string[]>(), true));
         }
 
         [Test]
@@ -151,7 +151,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var svc = CreateBeerService(queryBuilder: builder.Object, pageSize: 7);
             await svc.GetNearestBeerLocations(new Location());
 
-            builder.Verify(b => b.CreateLimitStage(7));
+            builder.Verify(b => b.WithAggregationLimit(7));
         }
 
         [Test]

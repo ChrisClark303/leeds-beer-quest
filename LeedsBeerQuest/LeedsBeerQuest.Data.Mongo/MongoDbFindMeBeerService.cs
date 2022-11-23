@@ -26,34 +26,38 @@ namespace LeedsBeerQuest.Data.Mongo
             _settings = settings.Value;
         }
 
-        public async Task<BeerEstablishment> GetBeerEstablishmentByName(string establishmentName)
+        public async Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
         {
-            var database = _connFactory.ConnectToDatabase();
-            var collection = database.GetCollection<BeerEstablishment>("Venues");
-
             var filter = Builders<BeerEstablishment>.Filter.Eq(f => f.Name, establishmentName);
             var projection = Builders<BeerEstablishment>.Projection
                 .Exclude("Location._t")
                 .Exclude("Location.Coordinates")
                 .Exclude("_id");
             var options = new FindOptions<BeerEstablishment> { Projection = projection };
+
+            var collection = GetVenuesCollection();
             var resultsCursor = await collection.FindAsync(filter, options);
             return await resultsCursor.FirstOrDefaultAsync();
         }
 
         public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
-            var database = _connFactory.ConnectToDatabase();
-            var collection = database.GetCollection<BeerEstablishment>("Venues");
-
-            var startLocation = myLocation ?? _settings.DefaultSearchLocation!;
+            var searchLocation = myLocation ?? _settings.DefaultSearchLocation!;
             var pipeline = _queryBuilder
-                .CreateGeoNearDocument(startLocation.Long, startLocation.Lat, "Location.Coordinates", "DistanceInMetres")
-                .CreateProjectionStage(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, true)
-                .CreateLimitStage(_settings.DefaultPageSize)
+                .WithAggregationGeoNear(searchLocation.Long, searchLocation.Lat, "Location.Coordinates", "DistanceInMetres")
+                .WithAggregationProjection(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, excludeId: true)
+                .WithAggregationLimit(_settings.DefaultPageSize)
                 .BuildPipeline();
+
+            var collection = GetVenuesCollection();
             var resultsCursor = collection.Aggregate(pipeline);
             return (await resultsCursor.ToListAsync()).ToArray();
+        }
+
+        private IMongoCollection<BeerEstablishment> GetVenuesCollection()
+        {
+            var database = _connFactory.ConnectToDatabase();
+            return database.GetCollection<BeerEstablishment>("Venues");
         }
     }
 }
