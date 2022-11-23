@@ -40,15 +40,21 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             return coll;
         }
 
-        private Mock<IMongoQueryBuilder> CreateMockQueryBuilder()
+        private Mock<IMongoQueryBuilder> CreateMockQueryBuilder(BsonDocument[] builtDocs = null)
         {
             var queryBuilder = new Mock<IMongoQueryBuilder>();
             queryBuilder.Setup(q => q.WithAggregationGeoNear(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.WithAggregationProjection(It.IsAny<string[]>(), It.IsAny<bool>()))
+            queryBuilder.Setup(q => q.WithAggregationProjection(It.IsAny<string[]>(), It.IsAny<ProjectionType>(), It.IsAny<bool>()))
                 .Returns(queryBuilder.Object);
             queryBuilder.Setup(q => q.WithAggregationLimit(It.IsAny<int>()))
                 .Returns(queryBuilder.Object);
+            queryBuilder.Setup(q => q.WithProjection(It.IsAny<string[]>(), It.IsAny<ProjectionType>(), It.IsAny<bool>()))
+                .Returns(queryBuilder.Object);
+            queryBuilder.Setup(q => q.WithEqualQuery(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(queryBuilder.Object);
+            queryBuilder.Setup(q => q.Build())
+                .Returns(builtDocs ?? new[] { new BsonDocument(), new BsonDocument() });
             return queryBuilder;
         }
 
@@ -87,7 +93,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_Calls_QueryBuilder_CreateGeoNearDocument_WithLocationDetails()
+        public async Task GetNearestBeerLocations_Calls_QueryBuilder_WithAggregationGeoNear_WithLocationDetails()
         {
             var builder = CreateMockQueryBuilder();
 
@@ -98,7 +104,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_NoLocationSpecified_Calls_QueryBuilder_CreateGeoNearDocument_WithDefaultSearchLocation()
+        public async Task GetNearestBeerLocations_NoLocationSpecified_Calls_QueryBuilder_WithAggregationGeoNear_WithDefaultSearchLocation()
         {
             var builder = CreateMockQueryBuilder();
 
@@ -109,7 +115,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_Calls_QueryBuilder_CreateGeoNearDocument_WithFieldNames()
+        public async Task GetNearestBeerLocations_Calls_QueryBuilder_WithAggregationGeoNear_WithFieldNames()
         {
             var builder = CreateMockQueryBuilder();
 
@@ -120,7 +126,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_Calls_QueryBuilder_CreateProjectionStage_WithFieldNames()
+        public async Task GetNearestBeerLocations_Calls_QueryBuilder_WithAggregationProjection_Include_WithFieldNames()
         {
             var builder = CreateMockQueryBuilder();
 
@@ -128,11 +134,11 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             await svc.GetNearestBeerLocations(new Location());
 
             string[] targetFieldNames = new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" };
-            builder.Verify(b => b.WithAggregationProjection(It.Is<string[]>(f =>Is.EquivalentTo(targetFieldNames).ApplyTo(f).IsSuccess), It.IsAny<bool>()));
+            builder.Verify(b => b.WithAggregationProjection(It.Is<string[]>(f =>Is.EquivalentTo(targetFieldNames).ApplyTo(f).IsSuccess), ProjectionType.Include, It.IsAny<bool>()));
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_Calls_QueryBuilder_CreateProjectionStage_ExcludingId()
+        public async Task GetNearestBeerLocations_Calls_QueryBuilder_WithAggregationProjection_ExcludingId()
         {
             var builder = CreateMockQueryBuilder();
 
@@ -140,11 +146,11 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             await svc.GetNearestBeerLocations(new Location());
 
             string[] targetFieldNames = new[] { "Name", "Location", "DistanceInMetres" };
-            builder.Verify(b => b.WithAggregationProjection(It.IsAny<string[]>(), true));
+            builder.Verify(b => b.WithAggregationProjection(It.IsAny<string[]>(), It.IsAny<ProjectionType>(), true));
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_Calls_QueryBuilder_CreateLimitStage_WithDefaultPageSize()
+        public async Task GetNearestBeerLocations_Calls_QueryBuilder_WithAggregationLimit_WithDefaultPageSize()
         {
             var builder = CreateMockQueryBuilder();
 
@@ -221,25 +227,63 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync()
+        public async Task GetBeerEstablishmentByName_Calls_QueryBuilder_WithProjection_Exclude_WithFieldNames()
         {
-            var collection = CreateMockCollection();
+            var builder = CreateMockQueryBuilder();
 
-            var svc = CreateBeerService(collection: collection);
+            var svc = CreateBeerService(queryBuilder: builder.Object);
             await svc.GetBeerEstablishmentByName(string.Empty);
 
-            collection.Verify(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()));
+            string[] targetFieldNames = new[] { "Location._t", "Location.Coordinates", "_id" };
+            builder.Verify(b => b.WithProjection(It.Is<string[]>(f => Is.EquivalentTo(targetFieldNames).ApplyTo(f).IsSuccess), ProjectionType.Exclude, It.IsAny<bool>()));
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_Calls_QueryBuilder_WithEqualQuery()
+        {
+            var builder = CreateMockQueryBuilder();
+
+            var svc = CreateBeerService(queryBuilder: builder.Object);
+            await svc.GetBeerEstablishmentByName("The Faversham");
+
+            builder.Verify(b => b.WithEqualQuery("Name", "The Faversham"));
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_Calls_QueryBuilder_Build()
+        {
+            var builder = CreateMockQueryBuilder();
+
+            var svc = CreateBeerService(queryBuilder: builder.Object);
+            await svc.GetBeerEstablishmentByName(string.Empty);
+
+            builder.Verify(b => b.Build());
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync_WithBuilder_FirstDoc()
+        {
+            var docs = new[] { new BsonDocument(), new BsonDocument() };
+            var builder = CreateMockQueryBuilder(docs);
+            var collection = CreateMockCollection();
+
+            var svc = CreateBeerService(collection: collection, queryBuilder: builder.Object);
+            await svc.GetBeerEstablishmentByName(string.Empty);
+
+            collection.Verify(c => c.FindAsync(It.Is<BsonDocumentFilterDefinition<BeerEstablishment>>(b => b.Document == docs[0]), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()));
         }
 
         [Test]
         public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync_WithProjectionOptionsToRemoveIdField()
         {
+            var docs = new[] { new BsonDocument(), new BsonDocument() };
+            var builder = CreateMockQueryBuilder(docs);
             var collection = CreateMockCollection();
 
-            var svc = CreateBeerService(collection: collection);
+            var svc = CreateBeerService(collection: collection, queryBuilder: builder.Object);
             await svc.GetBeerEstablishmentByName(string.Empty);
 
-            collection.Verify(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.Is<FindOptions<BeerEstablishment>>(o => o.Projection != null), It.IsAny<CancellationToken>()));
+            collection.Verify(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.Is<FindOptions<BeerEstablishment>>(o => (o.Projection as BsonDocumentProjectionDefinition<BeerEstablishment,BeerEstablishment>).Document == docs[1]), It.IsAny<CancellationToken>()));
         }
 
         [Test]

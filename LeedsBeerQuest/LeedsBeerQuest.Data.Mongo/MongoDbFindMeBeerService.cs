@@ -28,15 +28,14 @@ namespace LeedsBeerQuest.Data.Mongo
 
         public async Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
         {
-            var filter = Builders<BeerEstablishment>.Filter.Eq(f => f.Name, establishmentName);
-            var projection = Builders<BeerEstablishment>.Projection
-                .Exclude("Location._t")
-                .Exclude("Location.Coordinates")
-                .Exclude("_id");
-            var options = new FindOptions<BeerEstablishment> { Projection = projection };
+            var documents = _queryBuilder
+                .WithEqualQuery("Name", establishmentName)
+                .WithProjection(new[] { "Location._t", "Location.Coordinates", "_id" }, ProjectionType.Exclude)
+                .Build();
 
+            var options = new FindOptions<BeerEstablishment> { Projection = documents[1] };
             var collection = GetVenuesCollection();
-            var resultsCursor = await collection.FindAsync(filter, options);
+            var resultsCursor = await collection.FindAsync<BeerEstablishment>(documents[0], options);
             return await resultsCursor.FirstOrDefaultAsync();
         }
 
@@ -45,7 +44,7 @@ namespace LeedsBeerQuest.Data.Mongo
             var searchLocation = myLocation ?? _settings.DefaultSearchLocation!;
             var pipeline = _queryBuilder
                 .WithAggregationGeoNear(searchLocation.Long, searchLocation.Lat, "Location.Coordinates", "DistanceInMetres")
-                .WithAggregationProjection(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, excludeId: true)
+                .WithAggregationProjection(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, ProjectionType.Include, excludeId: true)
                 .WithAggregationLimit(_settings.DefaultPageSize)
                 .BuildPipeline();
 

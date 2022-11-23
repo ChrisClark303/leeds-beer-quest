@@ -64,10 +64,22 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public void WithAggregationProjection_CreatesProjectDocWithFieldValuesSet()
+        public void WithEqualQuery_CreatesDoc_WithFieldNameAndValueSet()
         {
             var builder = new MongoQueryBuilder();
-            var docs = builder.WithAggregationProjection(new[] {"Name", "Distance"})
+            var docs = builder.WithEqualQuery("Category", "Closed venues")
+                .Build();
+
+            var doc = docs.First();
+            Assert.That(doc.Names.First(), Is.EqualTo("Category"));
+            Assert.That(doc.Values.First().ToString(), Is.EqualTo("Closed venues"));
+        }
+
+        [Test]
+        public void WithAggregationProjection_ProjectionTypeInclude_CreatesProjectDocWithFieldValuesSet_To_1()
+        {
+            var builder = new MongoQueryBuilder();
+            var docs = builder.WithAggregationProjection(new[] {"Name", "Distance"}, ProjectionType.Include)
                 .Build();
 
             var doc = docs.First();
@@ -82,10 +94,28 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
+        public void WithAggregationProjection_ProjectionTypeExclude_CreatesProjectDocWithFieldValuesSet_To_0()
+        {
+            var builder = new MongoQueryBuilder();
+            var docs = builder.WithAggregationProjection(new[] { "Name", "Distance" }, ProjectionType.Exclude)
+                .Build();
+
+            var doc = docs.First();
+            Assert.That(doc.Names.First(), Is.EqualTo("$project"));
+            var valueDoc = doc.Values.First().AsBsonDocument;
+
+            Assert.That(valueDoc.Names.ElementAt(0), Is.EqualTo("Name"));
+            Assert.That(valueDoc.Values.ElementAt(0).AsInt32, Is.EqualTo(0));
+
+            Assert.That(valueDoc.Names.ElementAt(1), Is.EqualTo("Distance"));
+            Assert.That(valueDoc.Values.ElementAt(1).AsInt32, Is.EqualTo(0));
+        }
+
+        [Test]
         public void WithAggregationProjection_ExcludeIdTrue_CreatesProjectDocWithIdSetTo0()
         {
             var builder = new MongoQueryBuilder();
-            var docs = builder.WithAggregationProjection(new[] { "Name"}, true)
+            var docs = builder.WithAggregationProjection(new[] { "Name"}, ProjectionType.Include, true)
                 .Build();
 
             var doc = docs.First();
@@ -170,11 +200,56 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public void Build_BuildsPipelineWithDocumentsInTheCorrectOrder()
+        public void WithProjection_ProjectionType_Include_CreatesDocWithFieldValuesSet_1()
+        {
+            var builder = new MongoQueryBuilder();
+            var docs = builder.WithProjection(new[] { "Name", "Distance" }, ProjectionType.Include)
+                .Build();
+
+            var doc = docs.First();
+            
+            Assert.That(doc.Names.ElementAt(0), Is.EqualTo("Name"));
+            Assert.That(doc.Values.ElementAt(0).AsInt32, Is.EqualTo(1));
+
+            Assert.That(doc.Names.ElementAt(1), Is.EqualTo("Distance"));
+            Assert.That(doc.Values.ElementAt(1).AsInt32, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void WithProjection_ProjectionType_Exclude_CreatesDocWithFieldValuesSet_0()
+        {
+            var builder = new MongoQueryBuilder();
+            var docs = builder.WithProjection(new[] { "Name", "Distance" }, ProjectionType.Exclude)
+                .Build();
+
+            var doc = docs.First();
+
+            Assert.That(doc.Names.ElementAt(0), Is.EqualTo("Name"));
+            Assert.That(doc.Values.ElementAt(0).AsInt32, Is.EqualTo(0));
+
+            Assert.That(doc.Names.ElementAt(1), Is.EqualTo("Distance"));
+            Assert.That(doc.Values.ElementAt(1).AsInt32, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void WithProjection_ExcludeIdTrue_CreatesProjectDocWithIdSetTo0()
+        {
+            var builder = new MongoQueryBuilder();
+            var docs = builder.WithProjection(new[] { "Name" }, ProjectionType.Include, excludeId: true)
+                .Build();
+
+            var doc = docs.First();
+
+            Assert.That(doc.Names.ElementAt(1), Is.EqualTo("_id"));
+            Assert.That(doc.Values.ElementAt(1).AsInt32, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void BuildPipeline_BuildsPipelineWithDocumentsInTheCorrectOrder()
         {
             var builder = new MongoQueryBuilder();
             builder.WithAggregationGeoNear(0, 0, "", "");
-            builder.WithAggregationProjection(new[] { "" });
+            builder.WithAggregationProjection(new[] { "" }, ProjectionType.Include);
             builder.WithAggregationLimit(0);
             var pipeLine = builder.BuildPipeline();
 

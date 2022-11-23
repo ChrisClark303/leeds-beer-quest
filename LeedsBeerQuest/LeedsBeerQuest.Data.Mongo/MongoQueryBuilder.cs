@@ -1,6 +1,13 @@
 ﻿using LeedsBeerQuest.App.Models.Read;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Linq;
+
+public enum ProjectionType
+{
+    Exclude = 0,
+    Include = 1
+}
 
 //TODO : Extract operation names to consts
 public class MongoQueryBuilder : IMongoQueryBuilder
@@ -38,15 +45,17 @@ public class MongoQueryBuilder : IMongoQueryBuilder
         return this;
     }
 
-    public IMongoQueryBuilder WithAggregationProjection(string[] fieldsToInclude, bool excludeId = false)
+    public IMongoQueryBuilder WithEqualQuery(string fieldName, string fieldValue)
     {
-        var projectedFieldDict = new Dictionary<string, int>(fieldsToInclude.Select(f => new KeyValuePair<string, int>(f, 1)));
-        if (excludeId)
-        {
-            projectedFieldDict.Add("_id", 0);
-        }
+        var doc = new BsonDocument(fieldName, fieldValue);
+        _documents.Add(doc);
 
-        var doc = new BsonDocument("$project", new BsonDocument(projectedFieldDict));
+        return this;
+    }
+
+    public IMongoQueryBuilder WithAggregationProjection(string[] fieldsToProject, ProjectionType projectionType, bool excludeId = false)
+    {
+        var doc = new BsonDocument("$project", CreateProjectionDocument(fieldsToProject, projectionType, excludeId));
         _documents.Add(doc);
         return this;
     }
@@ -56,6 +65,23 @@ public class MongoQueryBuilder : IMongoQueryBuilder
         var doc = new BsonDocument("$limit", pageSize);
         _documents.Add(doc);
         return this;
+    }
+
+    public IMongoQueryBuilder WithProjection(string[] fieldsToProject, ProjectionType projectionType, bool excludeId = false)
+    {
+        var document = CreateProjectionDocument(fieldsToProject, projectionType, excludeId);
+        _documents.Add(document);
+        return this;
+    }
+
+    private BsonDocument CreateProjectionDocument(string[] fieldsToProject, ProjectionType projectionType, bool excludeId = false)
+    {
+        var projectedFieldDict = new Dictionary<string, int>(fieldsToProject.Select(f => new KeyValuePair<string, int>(f, (int)projectionType)));
+        if (excludeId)
+        {
+            projectedFieldDict.Add("_id", 0);
+        }
+        return new BsonDocument(projectedFieldDict);
     }
 
     public PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> BuildPipeline()
