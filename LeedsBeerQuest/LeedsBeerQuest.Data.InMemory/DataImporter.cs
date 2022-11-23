@@ -25,8 +25,7 @@ namespace LeedsBeerQuest.App
         private async Task<string> GetBeerQuestData()
         {
             var csvData = await _dataImportClient.GetAsync("leedsbeerquest.csv");
-            var dataString = await csvData.Content.ReadAsStringAsync();
-            return dataString;
+            return await csvData.Content.ReadAsStringAsync();
         }
     }
 }
