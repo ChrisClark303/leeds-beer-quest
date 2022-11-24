@@ -45,7 +45,7 @@ public class MongoQueryBuilder : IMongoQueryBuilder
         return this;
     }
 
-    public IMongoQueryBuilder WithEqualQuery(string fieldName, string fieldValue)
+    public IMongoQueryBuilder WithIsEqualToQuery(string fieldName, string fieldValue)
     {
         var doc = new BsonDocument(fieldName, fieldValue);
         _documents.Add(doc);

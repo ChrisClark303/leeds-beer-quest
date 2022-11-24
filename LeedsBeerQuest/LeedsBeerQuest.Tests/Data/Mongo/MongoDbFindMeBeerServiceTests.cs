@@ -32,27 +32,20 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         private Mock<IMongoCollection<BeerEstablishment>> CreateMockCollection()
         {
             var coll = new Mock<IMongoCollection<BeerEstablishment>>();
-            coll.Setup(c => c.Aggregate<BeerEstablishmentLocation>(It.IsAny<PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation>>(),
-                It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
+            coll.Setup(c => c.Aggregate<BeerEstablishmentLocation>(
+                    It.IsAny<PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation>>(),
+                    It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
                 .Returns(new Mock<IAsyncCursor<BeerEstablishmentLocation>>().Object);
             coll.Setup(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Mock<IAsyncCursor<BeerEstablishment>>().Object);
             return coll;
         }
 
-        private Mock<IMongoQueryBuilder> CreateMockQueryBuilder(BsonDocument[] builtDocs = null)
+        private Mock<IMongoQueryBuilder> CreateMockQueryBuilder(BsonDocument[]? builtDocs = null)
         {
             var queryBuilder = new Mock<IMongoQueryBuilder>();
-            queryBuilder.Setup(q => q.WithAggregationGeoNear(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.WithAggregationProjection(It.IsAny<string[]>(), It.IsAny<ProjectionType>(), It.IsAny<bool>()))
-                .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.WithAggregationLimit(It.IsAny<int>()))
-                .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.WithProjection(It.IsAny<string[]>(), It.IsAny<ProjectionType>(), It.IsAny<bool>()))
-                .Returns(queryBuilder.Object);
-            queryBuilder.Setup(q => q.WithEqualQuery(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(queryBuilder.Object);
+            //ensure any fluent method returning an IMongoQueryBuilder instance returns the mock
+            queryBuilder.SetReturnsDefault<IMongoQueryBuilder>(queryBuilder.Object);
             queryBuilder.Setup(q => q.Build())
                 .Returns(builtDocs ?? new[] { new BsonDocument(), new BsonDocument() });
             return queryBuilder;
@@ -246,7 +239,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var svc = CreateBeerService(queryBuilder: builder.Object);
             await svc.GetBeerEstablishmentByName("The Faversham");
 
-            builder.Verify(b => b.WithEqualQuery("Name", "The Faversham"));
+            builder.Verify(b => b.WithIsEqualToQuery("Name", "The Faversham"));
         }
 
         [Test]
@@ -274,7 +267,7 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync_WithProjectionOptionsToRemoveIdField()
+        public async Task GetBeerEstablishmentByName_CallsCollection_FindAsync_WithProjectionOptions_FromSecondDoc()
         {
             var docs = new[] { new BsonDocument(), new BsonDocument() };
             var builder = CreateMockQueryBuilder(docs);

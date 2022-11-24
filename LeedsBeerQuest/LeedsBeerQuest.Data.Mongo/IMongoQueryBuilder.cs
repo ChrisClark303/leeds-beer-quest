@@ -9,7 +9,7 @@ public interface IMongoQueryBuilder
     IMongoQueryBuilder WithNotEqualQuery(string fieldName, string fieldValue);
     IMongoQueryBuilder WithAggregationProjection(string[] fieldsToProject, ProjectionType projectionType, bool excludeId = false);
     IMongoQueryBuilder WithProjection(string[] fieldsToProject, ProjectionType projectionType, bool excludeId = false);
-    IMongoQueryBuilder WithEqualQuery(string fieldName, string fieldValue);
+    IMongoQueryBuilder WithIsEqualToQuery(string fieldName, string fieldValue);
     BsonDocument[] Build();
     PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation> BuildPipeline();
 }

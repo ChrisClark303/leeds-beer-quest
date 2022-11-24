@@ -64,10 +64,10 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public void WithEqualQuery_CreatesDoc_WithFieldNameAndValueSet()
+        public void WithIsEqualToQuery_CreatesDoc_WithFieldNameAndValueSet()
         {
             var builder = new MongoQueryBuilder();
-            var docs = builder.WithEqualQuery("Category", "Closed venues")
+            var docs = builder.WithIsEqualToQuery("Category", "Closed venues")
                 .Build();
 
             var doc = docs.First();

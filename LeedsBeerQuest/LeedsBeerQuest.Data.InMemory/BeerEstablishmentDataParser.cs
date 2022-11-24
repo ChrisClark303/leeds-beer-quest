@@ -4,6 +4,7 @@ using LocationWriteModel = LeedsBeerQuest.App.Models.Write.Location;
 
 namespace LeedsBeerQuest.App
 {
+    //TODO : Review this and see if it can be made a little easier to read.
     public class BeerEstablishmentDataParser : IBeerEstablishmentDataParser
     {
         //TODO: Not sure about leaving this as a field

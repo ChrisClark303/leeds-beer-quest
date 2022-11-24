@@ -27,13 +27,5 @@ namespace LeedsBeerQuest.Tests
                 _response = response
             };
         }
-
-        public static StubMessageHandler WithResponse(HttpStatusCode statusCode)
-        {
-            return new StubMessageHandler()
-            {
-                _response = new HttpResponseMessage(statusCode)
-            };
-        }
     }
 }

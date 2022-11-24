@@ -6,6 +6,7 @@ namespace LeedsBeerQuest.Api.Controllers
 {
     [ApiController]
     [Route("Beer")]
+    [Tags("Find Me Beer!")]
     public class FindMeBeerController : ControllerBase
     {
         private readonly IFindMeBeerService _findBeerService;
@@ -18,9 +19,10 @@ namespace LeedsBeerQuest.Api.Controllers
         }
 
         /// <summary>
-        /// Returns the location details of establishments nearest to the specified coordinates, in ascending order of distance.
-        /// If no coordinates are supplied, a default search location is used instead.
+        /// Returns the nearest establishments to a given location
         /// </summary>
+        /// <remarks>Returns the location details of establishments nearest to the specified coordinates, in ascending order of distance.
+        /// If no coordinates are supplied, a default search location is used instead.</remarks>
         /// <param name="lat">The latitude coordinate to use as the search location</param>
         /// <param name="lng">The longitude coordinate to use as the search location</param>
         /// <returns></returns>
@@ -47,8 +49,9 @@ namespace LeedsBeerQuest.Api.Controllers
         }
 
         /// <summary>
-        /// Returns full details of the beer establishment specified by name in the route.
+        /// Returns the specified beer establishment
         /// </summary>
+        /// <remarks>Returns full details of the beer establishment specified by name in the route.</remarks>
         /// <param name="establishmentName">The name of the establishment to search for</param>
         /// <returns></returns>
         [HttpGet("{establishmentName}")]

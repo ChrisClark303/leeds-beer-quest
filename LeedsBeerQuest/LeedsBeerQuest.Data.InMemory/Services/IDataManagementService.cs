@@ -1,6 +1,6 @@
 ﻿using LeedsBeerQuest.App.Models.Read;
 
-namespace LeedsBeerQuest.App
+namespace LeedsBeerQuest.App.Services
 {
     public interface IDataManagementService
     {

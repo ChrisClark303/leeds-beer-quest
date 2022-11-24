@@ -11,15 +11,11 @@ using System.Security.Cryptography.Xml;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-});
-builder.Services.AddServices(builder.Configuration);
-builder.Services.AddConfig(builder.Configuration);
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddSwagger()
+    .AddServices(builder.Configuration)
+    .AddConfig(builder.Configuration);
 
 var app = builder.Build();
 
@@ -37,9 +33,6 @@ app.UseCors(options =>
 });
 
 app.MapControllers();
-app.MapPatch("/data-management/import", async ([FromServices] DataImporter importer) =>
-{
-    await importer.Import();
-});
+app.MapMinimalApis();
 
 app.Run();
