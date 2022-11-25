@@ -18,31 +18,33 @@ namespace LeedsBeerQuest.App.Services
             _settings = settings.Value;
         }
 
-        public async Task<BeerEstablishment> GetBeerEstablishmentByName(string establishmentName)
+        public Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
         {
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");
-            if (establishments == null)
+            BeerEstablishment? establishment = null;
+            if (establishments != null) //TODO : Invert this if?
             {
-                return null;
+                establishment = establishments.FirstOrDefault(e => e.Name == establishmentName);
             }
 
-            return establishments.FirstOrDefault(e => e.Name == establishmentName);
+            return Task.FromResult(establishment);
         }
 
         //TODO : Address this warning in the readme
-        public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
+        public Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");
-            if (establishments == null)
+            var nearestLocations = Array.Empty<BeerEstablishmentLocation>();
+            if (establishments != null)
             {
-                return Array.Empty<BeerEstablishmentLocation>();
+                var locations = CreateLocationModel(myLocation, establishments!);
+                nearestLocations = locations
+                    .OrderBy(l => l.Distance)
+                    .Take(_settings.DefaultPageSize)
+                    .ToArray();
             }
 
-            var locations = CreateLocationModel(myLocation, establishments!);
-            return locations
-                .OrderBy(l => l.Distance)
-                .Take(_settings.DefaultPageSize)
-                .ToArray();
+            return Task.FromResult(nearestLocations);
         }
 
         private IEnumerable<BeerEstablishmentLocation> CreateLocationModel(Location? myLocation, BeerEstablishment[] establishments)

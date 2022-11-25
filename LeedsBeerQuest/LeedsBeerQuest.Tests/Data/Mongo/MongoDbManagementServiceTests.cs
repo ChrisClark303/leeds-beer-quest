@@ -36,61 +36,61 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
         }
 
         [Test]
-        public void ImportData_RetrievesConnectionToDatabase_FromDatabaseConnectionFactory()
+        public async Task ImportData_RetrievesConnectionToDatabase_FromDatabaseConnectionFactory()
         {
             var dbConnFactory = new Mock<IMongoDatabaseConnectionFactory>();
 
             var mgmtSvc = CreateManagementService(dbConnFactory);
-            mgmtSvc.ImportData(Array.Empty<BeerEstablishment>());
+            await mgmtSvc.ImportData(Array.Empty<BeerEstablishment>());
 
             dbConnFactory.Verify(f => f.ConnectToDatabase());
         }
 
         [Test]
-        public void ImportData_RetrievesVenuesCollection_FromDatabase()
+        public async Task ImportData_RetrievesVenuesCollection_FromDatabase()
         {
             var database = new Mock<IMongoDatabase>();
 
             var mgmtSvc = CreateManagementService(database: database);
-            mgmtSvc.ImportData(Array.Empty<BeerEstablishment>());
+            await mgmtSvc.ImportData(Array.Empty<BeerEstablishment>());
 
             database.Verify(f => f.GetCollection<BeerEstablishment>("Venues", It.IsAny<MongoCollectionSettings>()));
         }
 
         [Test]
-        public void ImportData_ClearsDownExistingData_FromCollection()
+        public async Task ImportData_ClearsDownExistingData_FromCollection()
         {
             var collection = new Mock<IMongoCollection<BeerEstablishment>>();
 
             var mgmtSvc = CreateManagementService(collection: collection);
-            mgmtSvc.ImportData(Array.Empty<BeerEstablishment>());
+            await mgmtSvc.ImportData(Array.Empty<BeerEstablishment>());
 
-            collection.Verify(c => c.DeleteMany(Builders<BeerEstablishment>.Filter.Empty, It.IsAny<CancellationToken>()));
+            collection.Verify(c => c.DeleteManyAsync(Builders<BeerEstablishment>.Filter.Empty, It.IsAny<CancellationToken>()));
         }
 
         [Test]
-        public void ImportData_InsertsBeerEstablisments_ToCollection()
+        public async Task ImportData_InsertsBeerEstablisments_ToCollection()
         {
             var collection = new Mock<IMongoCollection<BeerEstablishment>>();
 
             var mgmtSvc = CreateManagementService(collection: collection);
             var establishments = new[] { new BeerEstablishment() };
-            mgmtSvc.ImportData(establishments);
+            await mgmtSvc.ImportData(establishments);
 
-            collection.Verify(c => c.InsertMany(establishments, It.IsAny<InsertManyOptions>(),CancellationToken.None));
+            collection.Verify(c => c.InsertManyAsync(establishments, It.IsAny<InsertManyOptions>(),CancellationToken.None));
         }
 
         [Test]
-        public void ImportData_CreatesLocationIndex()
+        public async Task ImportData_CreatesLocationIndex()
         {
             var idxMgr = new Mock<IMongoIndexManager<BeerEstablishment>>();
 
             var mgmtSvc = CreateManagementService(indexManager: idxMgr);
             var establishments = new[] { new BeerEstablishment() };
-            mgmtSvc.ImportData(establishments);
+            await mgmtSvc.ImportData(establishments);
 
             //Couldn't figure out a way of inspecting the internals of CreateIndexModel to check the index was being created with the correct properties
-            idxMgr.Verify(i => i.CreateOne(It.IsAny<CreateIndexModel<BeerEstablishment>>(), It.IsAny<CreateOneIndexOptions>(), It.IsAny<CancellationToken>()));
+            idxMgr.Verify(i => i.CreateOneAsync(It.IsAny<CreateIndexModel<BeerEstablishment>>(), It.IsAny<CreateOneIndexOptions>(), It.IsAny<CancellationToken>()));
         }
     }
 }

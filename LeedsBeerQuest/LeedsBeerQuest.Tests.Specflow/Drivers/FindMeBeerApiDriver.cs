@@ -69,7 +69,10 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
             LastRequestStatusCode = getBeerByNameResponse.StatusCode;
             if (getBeerByNameResponse.IsSuccessStatusCode)
             {
-                action(await getBeerByNameResponse.Content.ReadFromJsonAsync<TResponseType>());
+                if (getBeerByNameResponse.Content.Headers.ContentLength > 0)
+                {
+                    action(await getBeerByNameResponse.Content.ReadFromJsonAsync<TResponseType>());
+                }
             }
 
             return getBeerByNameResponse.IsSuccessStatusCode;

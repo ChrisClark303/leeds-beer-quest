@@ -37,7 +37,7 @@ namespace LeedsBeerQuest.Tests.App
                 Assert.That(establishment.Address, Is.EqualTo("23-25 Great George Street, Leeds LS1 3BB"));
                 Assert.That(establishment.Phone, Is.EqualTo("0113 220 4389"));
                 Assert.That(establishment.Twitter, Is.EqualTo("EscobarLeeds"));
-                Assert.That(establishment.Ratings.Beer, Is.EqualTo(2.2));
+                Assert.That(establishment.Ratings!.Beer, Is.EqualTo(2.2));
                 Assert.That(establishment.Ratings.Atmosphere, Is.EqualTo(3));
                 Assert.That(establishment.Ratings.Amenities, Is.EqualTo(3));
                 Assert.That(establishment.Ratings.Value, Is.EqualTo(3.9));
@@ -59,6 +59,8 @@ namespace LeedsBeerQuest.Tests.App
 
             var establishment = establishments.First();
             Assert.That(establishment.Location, Is.TypeOf<LeedsBeerQuest.App.Models.Write.Location>());
+            var writeModel = (establishment.Location as LeedsBeerQuest.App.Models.Write.Location);
+            Assert.That(writeModel!.Coordinates, Is.EquivalentTo(new[] { 53.8007317, -1.5481764 }));
         }
 
         [Test]

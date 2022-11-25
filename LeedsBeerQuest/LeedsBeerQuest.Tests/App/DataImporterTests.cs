@@ -1,5 +1,6 @@
 using LeedsBeerQuest.App;
 using LeedsBeerQuest.App.Models.Read;
+using LeedsBeerQuest.App.Services;
 using Moq;
 
 namespace LeedsBeerQuest.Tests.App

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LeedsBeerQuest.App.Services;
+using System.Collections.Generic;
 
 namespace LeedsBeerQuest.App
 {
@@ -19,14 +20,13 @@ namespace LeedsBeerQuest.App
         {
             string dataString = await GetBeerQuestData();
             var parsedEstablishments = _dataParser.Parse(dataString);
-            _dataManagementService.ImportData(parsedEstablishments);
+            await _dataManagementService.ImportData(parsedEstablishments);
         }
 
         private async Task<string> GetBeerQuestData()
         {
             var csvData = await _dataImportClient.GetAsync("leedsbeerquest.csv");
-            var dataString = await csvData.Content.ReadAsStringAsync();
-            return dataString;
+            return await csvData.Content.ReadAsStringAsync();
         }
     }
 }

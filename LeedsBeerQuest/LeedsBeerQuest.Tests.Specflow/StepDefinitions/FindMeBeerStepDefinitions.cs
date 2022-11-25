@@ -46,13 +46,15 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
 
         [Then(@"the 10 establishments closest to that location should be returned")]
         [Then(@"the 10 establishments closest to Joseph's Well should be returned")]
-        public void ThenTheEstablishmentsClosestToJosephsWellShouldBeReturned(Table table)
+        public void ThenTheEstablishmentsClosestToLocationShouldBeReturned(Table table)
         {
-            Assert.AreEqual(table.RowCount, _driver.Establishments.Length);
+            var establishments = _driver.Establishments;
+            Assert.IsNotNull(establishments);
+            Assert.AreEqual(table.RowCount, establishments?.Length);
             for (int i = 0; i < table.RowCount; i++)
             {
                 var row = table.Rows[i];
-                var establishment = _driver.Establishments[i];
+                var establishment = establishments![i];
                 Assert.AreEqual(row["Name"], establishment.Name);
                 Assert.AreEqual(Double.Parse(row["Lat"]), establishment.Location?.Lat);
                 Assert.AreEqual(Double.Parse(row["Lon"]), establishment.Location?.Long);
@@ -77,18 +79,19 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
         public void ThenAllDetailsAboutThatEstablishmentShouldBeReturned(Table table)
         {
             var e = _driver.EstablishmentByName;
+            Assert.That(e, Is.Not.Null);
             var dataRow = table.Rows.First();
-            dataRow[nameof(e.Name)] = e.Name;
+            dataRow[nameof(e.Name)] = e!.Name;
             dataRow[nameof(e.Category)] = e.Category;
-            dataRow[nameof(e.Location)] = $"{e.Location.Lat},{e.Location.Long}";
+            dataRow[nameof(e.Location)] = $"{e.Location?.Lat},{e.Location?.Long}";
             dataRow[nameof(e.Address)] = e.Address;
             dataRow[nameof(e.Phone)] = e.Phone;
             dataRow[nameof(e.Twitter)] = e.Twitter;
-            dataRow[nameof(e.Thumbnail)] = e.Thumbnail.ToString();
+            dataRow[nameof(e.Thumbnail)] = e.Thumbnail!.ToString();
             dataRow[nameof(e.Excerpt)] = e.Excerpt;
             dataRow[nameof(e.Date)] = e.Date.ToString();
-            dataRow[nameof(e.Tags)] = string.Join(",", e.Tags);
-            dataRow[nameof(e.Ratings.Value)] = e.Ratings.Value.ToString();
+            dataRow[nameof(e.Tags)] = string.Join(",", e.Tags!);
+            dataRow[nameof(e.Ratings.Value)] = e.Ratings!.Value.ToString();
             dataRow[nameof(e.Ratings.Amenities)] = e.Ratings.Amenities.ToString();
             dataRow[nameof(e.Ratings.Atmosphere)] = e.Ratings.Atmosphere.ToString();
             dataRow[nameof(e.Ratings.Beer)] = e.Ratings.Beer.ToString();

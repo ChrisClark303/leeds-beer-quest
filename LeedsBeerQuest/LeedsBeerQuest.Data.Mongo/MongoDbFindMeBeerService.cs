@@ -26,34 +26,41 @@ namespace LeedsBeerQuest.Data.Mongo
             _settings = settings.Value;
         }
 
-        public async Task<BeerEstablishment> GetBeerEstablishmentByName(string establishmentName)
+        public async Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
         {
-            var database = _connFactory.ConnectToDatabase();
-            var collection = database.GetCollection<BeerEstablishment>("Venues");
+            //TODO: Not massively happy about having to use document[0] and [1]
+            var documents = _queryBuilder
+                .WithIsEqualToQuery("Name", establishmentName)
+                .WithProjection(new[] { "Location._t", "Location.Coordinates", "_id" }, ProjectionType.Exclude)
+                .Build();
 
-            var filter = Builders<BeerEstablishment>.Filter.Eq(f => f.Name, establishmentName);
-            var projection = Builders<BeerEstablishment>.Projection
-                .Exclude("Location._t")
-                .Exclude("Location.Coordinates")
-                .Exclude("_id");
+            var filter = documents[0];
+            var projection = documents[1];
+
             var options = new FindOptions<BeerEstablishment> { Projection = projection };
-            var resultsCursor = await collection.FindAsync(filter, options);
+            var collection = GetVenuesCollection();
+            var resultsCursor = await collection.FindAsync<BeerEstablishment>(filter, options);
             return await resultsCursor.FirstOrDefaultAsync();
         }
 
         public async Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
-            var database = _connFactory.ConnectToDatabase();
-            var collection = database.GetCollection<BeerEstablishment>("Venues");
-
-            var startLocation = myLocation ?? _settings.DefaultSearchLocation!;
+            var searchLocation = myLocation ?? _settings.DefaultSearchLocation!;
             var pipeline = _queryBuilder
-                .CreateGeoNearDocument(startLocation.Long, startLocation.Lat, "Location.Coordinates", "DistanceInMetres")
-                .CreateProjectionStage(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, true)
-                .CreateLimitStage(_settings.DefaultPageSize)
+                .WithAggregationGeoNear(searchLocation.Long, searchLocation.Lat, "Location.Coordinates", "DistanceInMetres")
+                .WithAggregationProjection(new[] { "Name", "Location.Lat", "Location.Long", "DistanceInMetres" }, ProjectionType.Include, excludeId: true)
+                .WithAggregationLimit(_settings.DefaultPageSize)
                 .BuildPipeline();
+
+            var collection = GetVenuesCollection();
             var resultsCursor = collection.Aggregate(pipeline);
             return (await resultsCursor.ToListAsync()).ToArray();
+        }
+
+        private IMongoCollection<BeerEstablishment> GetVenuesCollection()
+        {
+            var database = _connFactory.ConnectToDatabase();
+            return database.GetCollection<BeerEstablishment>("Venues");
         }
     }
 }

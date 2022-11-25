@@ -1,9 +1,9 @@
 ﻿using LeedsBeerQuest.App.Models.Read;
 
-namespace LeedsBeerQuest.App
+namespace LeedsBeerQuest.App.Services
 {
     public interface IDataManagementService
     {
-        void ImportData(BeerEstablishment[] establishments);
+        Task ImportData(BeerEstablishment[] establishments);
     }
 }

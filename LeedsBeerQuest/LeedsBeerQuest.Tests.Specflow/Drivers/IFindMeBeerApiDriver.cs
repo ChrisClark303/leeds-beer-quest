@@ -5,7 +5,7 @@ namespace LeedsBeerQuest.Tests.Specflow.Drivers
 {
     internal interface IFindMeBeerApiDriver
     {
-        BeerEstablishmentLocation[] Establishments { get; }
+        BeerEstablishmentLocation[]? Establishments { get; }
         BeerEstablishment? EstablishmentByName { get; }
         HttpStatusCode LastRequestStatusCode { get; }
 
