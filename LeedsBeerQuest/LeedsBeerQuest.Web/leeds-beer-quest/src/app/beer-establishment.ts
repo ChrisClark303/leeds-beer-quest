@@ -1,3 +1,4 @@
+import { EstablishmentRatings } from "./establishment-ratings";
 
 export class BeerEstablishment {
     name: string;
@@ -9,6 +10,6 @@ export class BeerEstablishment {
     address : string;
     phone: string;
     twitter: string;
-   // EstablishmentRatings Ratings { get; set; }
+    ratings: EstablishmentRatings;
     tags: string;
 }
