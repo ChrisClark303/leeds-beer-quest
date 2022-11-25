@@ -1,6 +1,11 @@
 # leeds-beer-quest
 Coding challenge to find places to drink beer. In Leeds.
 
+## Introduction
+
+This is a dotnet 7 application hosting an aspnetcore webapi, with an angular front-end. In addition, there is a MongoDB data provider for storage. The API and front-end are stored in Azure, and can be found [here](https://leedsbeerquestapi.azurewebsites.net/swagger/index.html) and [here](https://purple-stone-0a63fe503.2.azurestaticapps.net/) respectively. 
+There is a basic deployment pipeline setup in [github actions](https://github.com/ChrisClark303/leeds-beer-quest/actions), so that, when changed are PR'd into Main, an automatic deployment is triggered and the latest version is pushed out. This is very basic as it stands - I let the setup process generate the yml for me and I've not made any further changes (apart from to disable the API management aspect, as I couldn't quite get it to work).  
+
 ## Project structure
 
 The entire app is broken into two; an angular front-end (Angular is the front-end technology I'm most familiar with) and a dotnet 7 API. The angular code can be found [here](https://github.com/ChrisClark303/leeds-beer-quest/tree/main/LeedsBeerQuest/LeedsBeerQuest.Web/leeds-beer-quest) and the API code is [here](https://github.com/ChrisClark303/leeds-beer-quest/tree/main/LeedsBeerQuest).
@@ -43,3 +48,5 @@ The app has been (mostly) test-driven, using NUnit and Moq. Ncrunch reports the 
 There are integration tests, written in Specflow (again with Nunit and Moq); they test end-to-end functionality, so there are only 4 of these. It's also worth noting that these are not UI tests, so they don't use Selenium or Cypress or similar to actually drive a browser and interact with the app; they are simply API tests, so while they exercise the entire back-end code, the UI is untested. They will, however, test through to MongoDB if the appsetting is set up for that ("Interesting" fact: I discovered that my distance calculation and Mongo's differs by a small amount while running the specflow tests across both providers; I subsequently changed the Assert to factor in a delta value to ensure the tests pass in both scenarios).
 
 ## Limitations
+
+There are a number of aspects that could be improved; firstly, there is no separate test/stage/prod environments setup in Azure, or the deployment pipeline. This means that there is no way to test code apart from on the local machine or in prod! Ideally I would want a test environment and the ability to deploy to it from a feature branch at will. However, I figured this was beyond the scope of this piece of work, but I would like to highlight that I wouldn't normally want to work like that! 
