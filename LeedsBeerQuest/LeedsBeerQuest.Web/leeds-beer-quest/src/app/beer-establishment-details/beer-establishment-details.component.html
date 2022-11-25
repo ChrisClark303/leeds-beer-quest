@@ -17,7 +17,7 @@
             {{selectedEstablishment.phone}}
         </div>
         <div class="card highlight-card card-small">
-            <a href=selectedEstablishment.url>{{selectedEstablishment.url}}</a>
+            <a [href]=selectedEstablishment.url target="_blank">{{selectedEstablishment.url}}</a>
         </div>
     </div>
     <div *ngIf="selectedEstablishment.twitter" class="card-container">
@@ -30,7 +30,20 @@
             {{tag}}
         </div>
     </div>
-
+    <div class="card-container">
+        <div class="card highlight-card card-small">
+            Beer: {{selectedEstablishment.ratings.beer}}
+        </div>
+        <div class="card highlight-card card-small">
+            Atmosphere: {{selectedEstablishment.ratings.atmosphere}}
+        </div>
+        <div class="card highlight-card card-small">
+            Amenities: {{selectedEstablishment.ratings.amenities}}
+        </div>
+        <div class="card highlight-card card-small">
+            Value: {{selectedEstablishment.ratings.value}}
+        </div>
+    </div>
 
 
 </span>
