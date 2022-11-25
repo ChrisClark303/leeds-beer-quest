@@ -59,6 +59,8 @@ namespace LeedsBeerQuest.Tests.App
 
             var establishment = establishments.First();
             Assert.That(establishment.Location, Is.TypeOf<LeedsBeerQuest.App.Models.Write.Location>());
+            var writeModel = (establishment.Location as LeedsBeerQuest.App.Models.Write.Location);
+            Assert.That(writeModel!.Coordinates, Is.EquivalentTo(new[] { 53.8007317, -1.5481764 }));
         }
 
         [Test]
