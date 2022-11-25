@@ -23,8 +23,8 @@ export class BeerMapComponent implements OnInit {
   constructor(private beerQuestService:BeerQuestService) { }
 
   ngOnInit(): void {
-    this.getLocations();
     this.setMapCentre();
+    this.AddLocationsToMap();
   }
 
   setMapCentre()
@@ -32,33 +32,34 @@ export class BeerMapComponent implements OnInit {
     this.center = {
       lat: 53.801196991070164,
       lng: -1.555570961376415
-    }  
+    }
+    this.addMarkerToMap("Your starting position", this.center.lat, this.center.lng, "Your starting position");  
   }
 
-  getLocations()
+  AddLocationsToMap()
   {
     this.beerQuestService.getEstablishmentsNearMe()
     .subscribe(result => {
       result.forEach((bl, i) => 
         {
           console.log(JSON.stringify({ bl }) );
-          this.addMarker(bl, i);
+          this.addMarkerToMap(bl.name, bl.location.lat, bl.location.long, `${i}: ${bl.name} (${bl.distance} mls)`);
         })
     });
   }
 
-  addMarker(location:BeerEstablishmentLocation, index:Number) {
+  addMarkerToMap(title:String, lat:Number, lng:Number, labelText:String) {
     this.markers.push({
       position: {
-        lat: location.location.lat,
-        lng: location.location.long
+        lat: lat,
+        lng: lng
       },
       label: {
         color: 'black',
-        text: `${index}: ${location.name} (${location.distance} mls)`,
+        text: labelText,
       },
-      title: location.name,
-      info: location.name,
+      title: title,
+      info: title,
       options: { animation: google.maps.Animation.DROP },
     });
   }
@@ -74,5 +75,4 @@ export class BeerMapComponent implements OnInit {
     this.infoContent = content;
     this.info.open(marker);
   }
-
 }
