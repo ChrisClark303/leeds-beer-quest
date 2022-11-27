@@ -4,7 +4,7 @@ namespace LeedsBeerQuest.App.Models.Write
 {
     public class Location : LocationReadModel
     {
-        //oddly, MongoDBs driver does not support get-only properties, apparently, so I've added a setter too.
+        //oddly, MongoDBs driver does not support get-only properties, apparently, so I've had to add a setter too.
         public double[] Coordinates
         {
             get { return new[] { Long, Lat }; }

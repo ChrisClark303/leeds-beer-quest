@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using LeedsBeerQuest.Data.Mongo;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using NUnit.Framework;
 
