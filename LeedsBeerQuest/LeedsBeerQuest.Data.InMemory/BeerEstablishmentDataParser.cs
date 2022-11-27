@@ -1,17 +1,18 @@
 ﻿using LeedsBeerQuest.App.Models;
 using LeedsBeerQuest.App.Models.Read;
+using System.Data;
+using System.Runtime.CompilerServices;
 using LocationWriteModel = LeedsBeerQuest.App.Models.Write.Location;
 
 namespace LeedsBeerQuest.App
 {
-    //TODO : Review this and see if it can be made a little easier to read.
     public class BeerEstablishmentDataParser : IBeerEstablishmentDataParser
     {
         private string[]? _columns;
 
         public BeerEstablishment[] Parse(string data)
         {
-            string[] allRows = data.TrimEnd('\n').TrimEnd('\r').Split("\r\n");
+            string[] allRows = data.RemoveTrailingCrLn().Split("\r\n");
             return allRows switch
             {
                 [] => Array.Empty<BeerEstablishment>(),
@@ -21,10 +22,10 @@ namespace LeedsBeerQuest.App
 
         private BeerEstablishment[] ParseDataRows(string columnHeaders, params string[] rows)
         {
-            _columns = columnHeaders.Replace("\"", "").Split(',');
+            _columns = columnHeaders.RemoveEscapedQuotes().Split(',');
             return rows.Select(row =>
             {
-                var rowData = row.Split("\",\"");
+                var rowData = row.SplitRowIntoData();
                 return ParseRow(rowData);
             })
             .ToArray();
@@ -67,7 +68,7 @@ namespace LeedsBeerQuest.App
                 return string.Empty;
             }
 
-            return rowData[index].Trim('\"', ' ');
+            return rowData[index].TrimQuotesAndSpaces();
         }
 
         private double GetDoubleValueForField(string fieldName, string[] rowData)
@@ -89,6 +90,29 @@ namespace LeedsBeerQuest.App
                 return Array.Empty<string>();
             }
             return value.Split(',');
+        }
+    }
+
+    public static class DataSanitisingExtensions
+    {
+        public static string RemoveTrailingCrLn(this string s)
+        {
+            return s.TrimEnd('\n').TrimEnd('\r');
+        }
+
+        public static string RemoveEscapedQuotes(this string s)
+        {
+            return s.Replace("\"", "");
+        }
+
+        public static string TrimQuotesAndSpaces(this string s)
+        {
+            return s.Trim('\"', ' ');
+        }
+
+        public static string[] SplitRowIntoData(this string s)
+        {
+            return s.Split("\",\"");
         }
     }
 }
