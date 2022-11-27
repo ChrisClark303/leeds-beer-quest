@@ -52,9 +52,9 @@ namespace LeedsBeerQuest.Tests.App
             Location myLocation = new Location() { Lat = 10, Long = 11 };
             var establishments = await findMeBeer.GetNearestBeerLocations(myLocation);
 
-            distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location1));
-            distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location2));
-            distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location3));
+            distanceCalculator.Verify(dc => dc.CalculateDistanceInMetres(myLocation, location1));
+            distanceCalculator.Verify(dc => dc.CalculateDistanceInMetres(myLocation, location2));
+            distanceCalculator.Verify(dc => dc.CalculateDistanceInMetres(myLocation, location3));
         }
 
         [Test]
@@ -77,9 +77,9 @@ namespace LeedsBeerQuest.Tests.App
 
             var establishments = await findMeBeer.GetNearestBeerLocations(default);
 
-            distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location1));
-            distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location2));
-            distanceCalculator.Verify(dc => dc.CalculateDistanceInMiles(myLocation, location3));
+            distanceCalculator.Verify(dc => dc.CalculateDistanceInMetres(myLocation, location1));
+            distanceCalculator.Verify(dc => dc.CalculateDistanceInMetres(myLocation, location2));
+            distanceCalculator.Verify(dc => dc.CalculateDistanceInMetres(myLocation, location3));
         }
 
         [Test]
@@ -96,14 +96,14 @@ namespace LeedsBeerQuest.Tests.App
         }
 
         [Test]
-        public async Task GetNearestBeerLocations_ReturnsNearestResults_InAscendingOrder()
+        public async Task GetNearestBeerLocations_ReturnsNearestResults_InAscendingOrderOfDistanceInMetres()
         {
             var locations = Enumerable.Range(0, 5).Select(i => new BeerEstablishment());
             var memCache = new MemoryCache(new MemoryCacheOptions());
             memCache.Set("establishments", locations.ToArray());
 
             var distanceCalculator = new Mock<ILocationDistanceCalculator>();
-            distanceCalculator.SetupSequence(c => c.CalculateDistanceInMiles(It.IsAny<Location>(), It.IsAny<Location>()))
+            distanceCalculator.SetupSequence(c => c.CalculateDistanceInMetres(It.IsAny<Location>(), It.IsAny<Location>()))
                 .Returns(5)
                 .Returns(4)
                 .Returns(3)
@@ -113,7 +113,7 @@ namespace LeedsBeerQuest.Tests.App
             var findMeBeer = CreateService(memCache, distanceCalculator.Object, pageSize: 4);
             var establishments = await findMeBeer.GetNearestBeerLocations(new Location());
 
-            Assert.That(establishments.Select(e => e.Distance), Is.EqualTo(new[] { 1, 2, 3, 4 }));
+            Assert.That(establishments.Select(e => e.DistanceInMetres), Is.EqualTo(new[] { 1, 2, 3, 4 }));
         }
 
         [Test]

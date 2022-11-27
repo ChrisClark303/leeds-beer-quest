@@ -39,7 +39,7 @@ namespace LeedsBeerQuest.App.Services
             {
                 var locations = CreateLocationModel(myLocation, establishments!);
                 nearestLocations = locations
-                    .OrderBy(l => l.Distance)
+                    .OrderBy(l => l.DistanceInMetres)
                     .Take(_settings.DefaultPageSize)
                     .ToArray();
             }
@@ -54,7 +54,7 @@ namespace LeedsBeerQuest.App.Services
             {
                 Name = e.Name,
                 Location = e.Location,
-                Distance = _distanceCalculator.CalculateDistanceInMiles(startLocation, e.Location!)
+                DistanceInMetres = _distanceCalculator.CalculateDistanceInMetres(startLocation, e.Location!)
             });
             return locations;
         }

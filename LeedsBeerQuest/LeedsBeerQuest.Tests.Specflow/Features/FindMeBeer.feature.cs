@@ -105,52 +105,52 @@ this.ScenarioInitialize(scenarioInfo);
                             "The George",
                             "53.8010902",
                             "-1.5524343",
-                            "0.128"});
+                            "206"});
                 table1.AddRow(new string[] {
                             "Fox & Newt",
                             "53.800045",
                             "-1.5594819",
-                            "0.178"});
+                            "287"});
                 table1.AddRow(new string[] {
                             "Veritas",
                             "53.8009071",
                             "-1.5511496",
-                            "0.181"});
+                            "291"});
                 table1.AddRow(new string[] {
                             "San Lucus",
                             "53.8008728",
                             "-1.5505636",
-                            "0.205"});
+                            "330"});
                 table1.AddRow(new string[] {
                             "Town Hall Tavern",
                             "53.7995262",
                             "-1.5513806",
-                            "0.206"});
+                            "332"});
                 table1.AddRow(new string[] {
                             "Wino",
                             "53.7983017",
                             "-1.5531774",
-                            "0.222"});
+                            "358"});
                 table1.AddRow(new string[] {
                             "The Faversham",
                             "53.8043518",
                             "-1.5573227",
-                            "0.229"});
+                            "369"});
                 table1.AddRow(new string[] {
                             "The Victoria Hotel",
                             "53.800808",
                             "-1.5497911",
-                            "0.237"});
+                            "381"});
                 table1.AddRow(new string[] {
                             "O\'Neill\'s",
                             "53.8007927",
                             "-1.549229",
-                            "0.26"});
+                            "418"});
                 table1.AddRow(new string[] {
                             "The Highland",
                             "53.7999306",
                             "-1.5617769",
-                            "0.268"});
+                            "431"});
 #line 6
  testRunner.Then("the 10 establishments closest to Joseph\'s Well should be returned", ((string)(null)), table1, "Then ");
 #line hidden
@@ -191,52 +191,52 @@ this.ScenarioInitialize(scenarioInfo);
                             "The White Rose",
                             "53.794857",
                             "-1.5473708",
-                            "0.0212"});
+                            "34"});
                 table2.AddRow(new string[] {
                             "The Scarbrough Hotel",
                             "53.7953644",
                             "-1.5463839",
-                            "0.0726"});
+                            "117"});
                 table2.AddRow(new string[] {
                             "Golf\"\" Cafe Bar",
                             "53.7934952",
                             "-1.5478653",
-                            "0.0753"});
+                            "121"});
                 table2.AddRow(new string[] {
                             "LIVIN\'italy",
                             "53.7937393",
                             "-1.5489566",
-                            "0.0811"});
+                            "131"});
                 table2.AddRow(new string[] {
                             "Wetherspoon\'s, Railway Station",
                             "53.7956467",
                             "-1.5485017",
-                            "0.0839"});
+                            "135"});
                 table2.AddRow(new string[] {
                             "Spencer\'s",
                             "53.7952538",
                             "-1.5457584",
-                            "0.087"});
+                            "140"});
                 table2.AddRow(new string[] {
                             "The Hop",
                             "53.7937317",
                             "-1.5491514",
-                            "0.0873"});
+                            "140"});
                 table2.AddRow(new string[] {
                             "The Head of Steam",
                             "53.7952881",
                             "-1.5457343",
-                            "0.0891"});
+                            "143"});
                 table2.AddRow(new string[] {
                             "Baht\'ap",
                             "53.7951088",
                             "-1.5454998",
-                            "0.0915"});
+                            "147"});
                 table2.AddRow(new string[] {
                             "The Prince of Wales",
                             "53.7951393",
                             "-1.54544",
-                            "0.0946"});
+                            "152"});
 #line 22
  testRunner.Then("the 10 establishments closest to that location should be returned", ((string)(null)), table2, "Then ");
 #line hidden
