@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps'
 import { BeerEstablishment } from '../beer-establishment';
-import { BeerEstablishmentLocation } from '../beer-establishment-location';
 import { BeerQuestService } from '../beer-quest.service';
 
 @Component({
@@ -33,7 +32,7 @@ export class BeerMapComponent implements OnInit {
       lat: 53.801196991070164,
       lng: -1.555570961376415
     }
-    this.addMarkerToMap("Your starting position", this.center.lat, this.center.lng, "Your starting position");  
+    this.addMarkerToMap("Your starting position", '', this.center.lat, this.center.lng, "Your starting position");  
   }
 
   AddLocationsToMap()
@@ -43,12 +42,12 @@ export class BeerMapComponent implements OnInit {
       result.forEach((bl, i) => 
         {
           console.log(JSON.stringify({ bl }) );
-          this.addMarkerToMap(`${bl.name} - ${Math.round(bl.distanceInMetres)}m from you`, bl.location.lat, bl.location.long, `${i}: ${bl.name} (${Math.round(bl.distanceInMetres)}m)`);
+          this.addMarkerToMap(`${bl.name} - ${Math.round(bl.distanceInMetres)}m from you`, bl.name, bl.location.lat, bl.location.long, `${i + 1}`);
         })
     });
   }
 
-  addMarkerToMap(title:String, lat:Number, lng:Number, labelText:String) {
+  addMarkerToMap(title:String, info:String, lat:Number, lng:Number, labelText:String) {
     this.markers.push({
       position: {
         lat: lat,
@@ -59,15 +58,15 @@ export class BeerMapComponent implements OnInit {
         text: labelText,
       },
       title: title,
-      info: title,
+      info: info, 
       options: { animation: google.maps.Animation.DROP },
     });
   }
 
-  showMarkerInformation(marker: MapMarker, content:any) {
+  showMarkerInformation(marker: MapMarker, title:any, content:any) {
     console.log("Content: " + content);
     this.establishmentSelected.emit(content);
-    this.infoContent = content;
+    this.infoContent = title;
     this.info.open(marker);
   }
 }

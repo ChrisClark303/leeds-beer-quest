@@ -2,12 +2,14 @@
 using LeedsBeerQuest.Api.Controllers;
 using LeedsBeerQuest.App.Models.Read;
 using LeedsBeerQuest.App.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,6 +58,23 @@ namespace LeedsBeerQuest.Tests.Api.Controllers
         }
 
         [Test]
+        public async Task GetNearestLocations_BeerService_ThrowsException_Returns500Response()
+        {
+            var findBeerService = new Mock<IFindMeBeerService>();
+            findBeerService.Setup(s => s.GetNearestBeerLocations(It.IsAny<Location>()))
+                .Throws<Exception>();
+
+            var controller = new FindMeBeerController(findBeerService.Object, new Mock<ILogger<FindMeBeerController>>().Object);
+            var response = await controller.GetNearestEstablishments();
+
+            Assert.That(response, Is.TypeOf<ObjectResult>());
+            var objectResult = response as ObjectResult;
+            Assert.That(objectResult!.Value, Is.TypeOf<ProblemDetails>());
+            var problemDetails = objectResult.Value as ProblemDetails;
+            Assert.That(problemDetails!.Status, Is.EqualTo(500));
+        }
+
+        [Test]
         public async Task GetBeerEstablishmentByName_CallsFindMeBeerService_GetBeerEstablishmentByName()
         {
             var findBeerService = new Mock<IFindMeBeerService>();
@@ -94,6 +113,23 @@ namespace LeedsBeerQuest.Tests.Api.Controllers
             var response = await controller.GetBeerEstablishmentByName("The Faversham");
 
             Assert.That(response, Is.TypeOf<NoContentResult>());
+        }
+
+        [Test]
+        public async Task GetBeerEstablishmentByName_BeerService_ThrowsException_Returns500Response()
+        {
+            var findBeerService = new Mock<IFindMeBeerService>();
+            findBeerService.Setup(s => s.GetBeerEstablishmentByName(It.IsAny<string>()))
+                .Throws<Exception>();
+
+            var controller = new FindMeBeerController(findBeerService.Object, new Mock<ILogger<FindMeBeerController>>().Object);
+            var response = await controller.GetBeerEstablishmentByName("The Faversham");
+
+            Assert.That(response, Is.TypeOf<ObjectResult>());
+            var objectResult = response as ObjectResult;
+            Assert.That(objectResult!.Value, Is.TypeOf<ProblemDetails>());
+            var problemDetails = objectResult.Value as ProblemDetails;
+            Assert.That(problemDetails!.Status, Is.EqualTo(500));
         }
     }
 }

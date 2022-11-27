@@ -6,6 +6,6 @@
     [label]="marker.label"
     [title]="marker.title"
     [options]="marker.options"
-    (mapClick)="showMarkerInformation(somemarker, marker.info)"></map-marker>
+    (mapClick)="showMarkerInformation(somemarker, marker.title, marker.info)"></map-marker>
     <map-info-window>{{infoContent}}</map-info-window>
 </google-map>

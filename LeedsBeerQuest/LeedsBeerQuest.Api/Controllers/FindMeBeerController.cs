@@ -31,9 +31,17 @@ namespace LeedsBeerQuest.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetNearestEstablishments(double? lat = null, double? lng = null)
         {
-            Location? location = CreateLocationModel(lat, lng);
-            var locations = await _findBeerService.GetNearestBeerLocations(location);
-            return Ok(locations);
+            try
+            {
+                Location? location = CreateLocationModel(lat, lng);
+                var locations = await _findBeerService.GetNearestBeerLocations(location);
+                return Ok(locations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred getting nearest establishments");
+                return Problem();
+            }
         }
 
         private static Location? CreateLocationModel(double? lat, double? lng)
@@ -59,12 +67,20 @@ namespace LeedsBeerQuest.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetBeerEstablishmentByName(string establishmentName)
         {
-            var beerEstablishment = await _findBeerService.GetBeerEstablishmentByName(establishmentName);
-            if (beerEstablishment == null)
+            try
             {
-                return NoContent();
+                var beerEstablishment = await _findBeerService.GetBeerEstablishmentByName(establishmentName);
+                if (beerEstablishment == null)
+                {
+                    return NoContent();
+                }
+                return Ok(beerEstablishment);
             }
-            return Ok(beerEstablishment);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred fetching establishment {establishment}", establishmentName);
+                return Problem();
+            }
         }
     }
 }
