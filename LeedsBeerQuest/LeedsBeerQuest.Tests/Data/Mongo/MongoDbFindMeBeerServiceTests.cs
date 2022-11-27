@@ -10,59 +10,6 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
 {
     public class MongoDbFindMeBeerServiceTests
     {
-        private MongoDbFindMeBeerService CreateBeerService(Mock<IMongoDatabaseConnectionFactory>? factory = null,
-                Mock<IMongoDatabase>? database = null,
-                Mock<IMongoCollection<BeerEstablishment>>? collection = null,
-                IMongoQueryBuilder? queryBuilder = null,
-                int pageSize = 5, Location? defaultSearchLocation = null)
-        {
-            var db = database ?? new Mock<IMongoDatabase>();
-            var dbConnFactory = factory ?? new Mock<IMongoDatabaseConnectionFactory>();
-            var coll = collection ?? CreateMockCollection();
-            var builder = queryBuilder ?? CreateMockQueryBuilder().Object;
-            dbConnFactory.Setup(f => f.ConnectToDatabase())
-                .Returns(db.Object);
-            db.Setup(d => d.GetCollection<BeerEstablishment>("Venues", It.IsAny<MongoCollectionSettings>()))
-                .Returns(coll.Object);
-
-            var settings = Options.Create(new FindMeBeerServiceSettings() { DefaultPageSize = pageSize, DefaultSearchLocation = defaultSearchLocation });
-            return new MongoDbFindMeBeerService(dbConnFactory.Object, builder, settings);
-        }
-
-        private Mock<IMongoCollection<BeerEstablishment>> CreateMockCollection()
-        {
-            var coll = new Mock<IMongoCollection<BeerEstablishment>>();
-            coll.Setup(c => c.Aggregate<BeerEstablishmentLocation>(
-                    It.IsAny<PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation>>(),
-                    It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
-                .Returns(new Mock<IAsyncCursor<BeerEstablishmentLocation>>().Object);
-            coll.Setup(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Mock<IAsyncCursor<BeerEstablishment>>().Object);
-            return coll;
-        }
-
-        private Mock<IMongoQueryBuilder> CreateMockQueryBuilder(BsonDocument[]? builtDocs = null)
-        {
-            var queryBuilder = new Mock<IMongoQueryBuilder>();
-            //ensure any fluent method returning an IMongoQueryBuilder instance returns the mock
-            queryBuilder.SetReturnsDefault<IMongoQueryBuilder>(queryBuilder.Object);
-            queryBuilder.Setup(q => q.Build())
-                .Returns(builtDocs ?? new[] { new BsonDocument(), new BsonDocument() });
-            return queryBuilder;
-        }
-
-        private Mock<IAsyncCursor<TResult>> CreateMockResultsCursor<TResult>(TResult[] results)
-        {
-            var cursor = new Mock<IAsyncCursor<TResult>>();
-            cursor.Setup(c => c.Current)
-                .Returns(results);
-            cursor.SetupSequence(c => c.MoveNextAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(true)
-                .ReturnsAsync(false);
-
-            return cursor;
-        }
-
         [Test]
         public async Task GetNearestBeerLocations_RetrievesConnectionToDatabase_FromDatabaseConnectionFactory()
         {
@@ -179,7 +126,6 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             collection.Verify(c => c.Aggregate(pipeline, It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()));
         }
 
-        //TODO : Tidy this up
         [Test]
         public async Task GetNearestBeerLocations_Returns_List_FromCollectionAggregate()
         {
@@ -292,6 +238,59 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
             var establishment = await svc.GetBeerEstablishmentByName(string.Empty);
 
             Assert.That(establishment, Is.EqualTo(results.First()));
+        }
+
+        private MongoDbFindMeBeerService CreateBeerService(Mock<IMongoDatabaseConnectionFactory>? factory = null,
+                Mock<IMongoDatabase>? database = null,
+                Mock<IMongoCollection<BeerEstablishment>>? collection = null,
+                IMongoQueryBuilder? queryBuilder = null,
+                int pageSize = 5, Location? defaultSearchLocation = null)
+        {
+            var db = database ?? new Mock<IMongoDatabase>();
+            var dbConnFactory = factory ?? new Mock<IMongoDatabaseConnectionFactory>();
+            var coll = collection ?? CreateMockCollection();
+            var builder = queryBuilder ?? CreateMockQueryBuilder().Object;
+            dbConnFactory.Setup(f => f.ConnectToDatabase())
+                .Returns(db.Object);
+            db.Setup(d => d.GetCollection<BeerEstablishment>("Venues", It.IsAny<MongoCollectionSettings>()))
+                .Returns(coll.Object);
+
+            var settings = Options.Create(new FindMeBeerServiceSettings() { DefaultPageSize = pageSize, DefaultSearchLocation = defaultSearchLocation });
+            return new MongoDbFindMeBeerService(dbConnFactory.Object, builder, settings);
+        }
+
+        private Mock<IMongoCollection<BeerEstablishment>> CreateMockCollection()
+        {
+            var coll = new Mock<IMongoCollection<BeerEstablishment>>();
+            coll.Setup(c => c.Aggregate<BeerEstablishmentLocation>(
+                    It.IsAny<PipelineDefinition<BeerEstablishment, BeerEstablishmentLocation>>(),
+                    It.IsAny<AggregateOptions>(), It.IsAny<CancellationToken>()))
+                .Returns(new Mock<IAsyncCursor<BeerEstablishmentLocation>>().Object);
+            coll.Setup(c => c.FindAsync(It.IsAny<FilterDefinition<BeerEstablishment>>(), It.IsAny<FindOptions<BeerEstablishment>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Mock<IAsyncCursor<BeerEstablishment>>().Object);
+            return coll;
+        }
+
+        private Mock<IMongoQueryBuilder> CreateMockQueryBuilder(BsonDocument[]? builtDocs = null)
+        {
+            var queryBuilder = new Mock<IMongoQueryBuilder>();
+            //ensure any fluent method returning an IMongoQueryBuilder instance returns the mock
+            queryBuilder.SetReturnsDefault<IMongoQueryBuilder>(queryBuilder.Object);
+            queryBuilder.Setup(q => q.Build())
+                .Returns(builtDocs ?? new[] { new BsonDocument(), new BsonDocument() });
+            return queryBuilder;
+        }
+
+        private Mock<IAsyncCursor<TResult>> CreateMockResultsCursor<TResult>(TResult[] results)
+        {
+            var cursor = new Mock<IAsyncCursor<TResult>>();
+            cursor.Setup(c => c.Current)
+                .Returns(results);
+            cursor.SetupSequence(c => c.MoveNextAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true)
+                .ReturnsAsync(false);
+
+            return cursor;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace LeedsBeerQuest.App.Services
         {
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");
             BeerEstablishment? establishment = null;
-            if (establishments != null) //TODO : Invert this if?
+            if (establishments != null)
             {
                 establishment = establishments.FirstOrDefault(e => e.Name == establishmentName);
             }
@@ -30,7 +30,6 @@ namespace LeedsBeerQuest.App.Services
             return Task.FromResult(establishment);
         }
 
-        //TODO : Address this warning in the readme
         public Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
             var establishments = _cache.Get<BeerEstablishment[]>("establishments");

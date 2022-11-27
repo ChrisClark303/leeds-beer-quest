@@ -93,7 +93,9 @@ public class MongoQueryBuilder : IMongoQueryBuilder
 
     public BsonDocument[] Build()
     {
-        //TODO : Reset the documents array at this point?
-        return _documents.ToArray();
+        var documents = _documents.ToArray();
+        //Reset the documents array in case it needs to be reused.
+        _documents.Clear();
+        return documents;
     }
 }

@@ -43,7 +43,7 @@ export class BeerMapComponent implements OnInit {
       result.forEach((bl, i) => 
         {
           console.log(JSON.stringify({ bl }) );
-          this.addMarkerToMap(bl.name, bl.location.lat, bl.location.long, `${i}: ${bl.name} (${bl.distanceInMetres}m)`);
+          this.addMarkerToMap(`${bl.name} - ${Math.round(bl.distanceInMetres)}m from you`, bl.location.lat, bl.location.long, `${i}: ${bl.name} (${Math.round(bl.distanceInMetres)}m)`);
         })
     });
   }

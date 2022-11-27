@@ -7,14 +7,6 @@ namespace LeedsBeerQuest.Tests.App
 {
     public class DataImporterTests
     {
-        private DataImporter CreateDataImporter(StubMessageHandler? stubMessageHandler = null, IBeerEstablishmentDataParser? dataParser = null, IDataManagementService? dataManagementService = null)
-        {
-            var httpClient = new HttpClient(stubMessageHandler ?? new StubMessageHandler()) { BaseAddress = new Uri("http://test_uri/") };
-            return new DataImporter(httpClient,
-                dataParser ?? new Mock<IBeerEstablishmentDataParser>().Object,
-                dataManagementService ?? new Mock<IDataManagementService>().Object);
-        }
-
         [Test]
         public async Task Import_RetrievesBeerQuestCsvData_FromHttpClient()
         {
@@ -54,6 +46,14 @@ namespace LeedsBeerQuest.Tests.App
             await dataImporter.Import();
 
             service.Verify(s => s.ImportData(establishments));
+        }
+
+        private DataImporter CreateDataImporter(StubMessageHandler? stubMessageHandler = null, IBeerEstablishmentDataParser? dataParser = null, IDataManagementService? dataManagementService = null)
+        {
+            var httpClient = new HttpClient(stubMessageHandler ?? new StubMessageHandler()) { BaseAddress = new Uri("http://test_uri/") };
+            return new DataImporter(httpClient,
+                dataParser ?? new Mock<IBeerEstablishmentDataParser>().Object,
+                dataManagementService ?? new Mock<IDataManagementService>().Object);
         }
     }
 }

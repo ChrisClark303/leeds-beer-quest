@@ -16,25 +16,6 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
 {
     public class MongoDbManagementServiceTests
     {
-        private MongoDbDataManagementService CreateManagementService(Mock<IMongoDatabaseConnectionFactory>? factory = null, 
-            Mock<IMongoDatabase>? database = null, 
-            Mock<IMongoCollection<BeerEstablishment>>? collection = null,
-            Mock<IMongoIndexManager<BeerEstablishment>>? indexManager = null)
-        {
-            var db = database ?? new Mock<IMongoDatabase>();
-            var dbConnFactory = factory ?? new Mock<IMongoDatabaseConnectionFactory>();
-            var coll = collection ?? new Mock<IMongoCollection<BeerEstablishment>>();
-            var idxMgr = indexManager ?? new Mock<IMongoIndexManager<BeerEstablishment>>();
-            dbConnFactory.Setup(f => f.ConnectToDatabase())
-                .Returns(db.Object);
-            db.Setup(d => d.GetCollection<BeerEstablishment>("Venues", It.IsAny<MongoCollectionSettings>()))
-                .Returns(coll.Object);
-            coll.Setup(c => c.Indexes)
-                .Returns(idxMgr.Object);
-
-            return new MongoDbDataManagementService(dbConnFactory.Object);
-        }
-
         [Test]
         public async Task ImportData_RetrievesConnectionToDatabase_FromDatabaseConnectionFactory()
         {
@@ -91,6 +72,25 @@ namespace LeedsBeerQuest.Tests.Data.Mongo
 
             //Couldn't figure out a way of inspecting the internals of CreateIndexModel to check the index was being created with the correct properties
             idxMgr.Verify(i => i.CreateOneAsync(It.IsAny<CreateIndexModel<BeerEstablishment>>(), It.IsAny<CreateOneIndexOptions>(), It.IsAny<CancellationToken>()));
+        }
+
+        private MongoDbDataManagementService CreateManagementService(Mock<IMongoDatabaseConnectionFactory>? factory = null,
+            Mock<IMongoDatabase>? database = null,
+            Mock<IMongoCollection<BeerEstablishment>>? collection = null,
+            Mock<IMongoIndexManager<BeerEstablishment>>? indexManager = null)
+        {
+            var db = database ?? new Mock<IMongoDatabase>();
+            var dbConnFactory = factory ?? new Mock<IMongoDatabaseConnectionFactory>();
+            var coll = collection ?? new Mock<IMongoCollection<BeerEstablishment>>();
+            var idxMgr = indexManager ?? new Mock<IMongoIndexManager<BeerEstablishment>>();
+            dbConnFactory.Setup(f => f.ConnectToDatabase())
+                .Returns(db.Object);
+            db.Setup(d => d.GetCollection<BeerEstablishment>("Venues", It.IsAny<MongoCollectionSettings>()))
+                .Returns(coll.Object);
+            coll.Setup(c => c.Indexes)
+                .Returns(idxMgr.Object);
+
+            return new MongoDbDataManagementService(dbConnFactory.Object);
         }
     }
 }
