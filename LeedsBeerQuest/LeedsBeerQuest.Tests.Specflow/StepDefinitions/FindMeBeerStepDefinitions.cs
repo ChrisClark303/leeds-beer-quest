@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System.Net;
 using System.Net.Http.Json;
 using TechTalk.SpecFlow.Bindings;
+using Location = LeedsBeerQuest.App.Models.Read.Location;
 
 namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
 {
@@ -34,7 +35,7 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
         [Given(@"I provide a latitude of (.*) and a longitiude of (.*)")]
         public void GivenIProvideALatitudeAndLongitude(double lat, double lng)
         {
-            _driver.SetSearchLocation(new App.Models.Read.Location() { Lat = lat, Long = lng });
+            _driver.SetSearchLocation(new Location() { Lat = lat, Long = lng });
         }
 
         [When(@"I request the nearest beers establishments")]
