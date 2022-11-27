@@ -13,7 +13,7 @@
         <div class="card highlight-card card-small">
             {{selectedEstablishment.address}}
         </div>
-        <div class="card highlight-card card-small">
+        <div *ngIf="selectedEstablishment.phone" class="card highlight-card card-small">
             {{selectedEstablishment.phone}}
         </div>
         <div class="card highlight-card card-small">
