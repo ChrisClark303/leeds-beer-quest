@@ -24,12 +24,25 @@ namespace LeedsBeerQuest.Data.Mongo
 
         public async Task ImportData(BeerEstablishment[] establishments)
         {
-            IMongoDatabase database = _connectionFactory.ConnectToDatabase();
-            var collection = database.GetCollection<BeerEstablishment>("Venues");
-            
+            var collection = ConnectToVenuesCollection();
+            await RefreshEstablishmentData(collection, establishments);
+            await CreateGeospatialIndex(collection);
+        }
+
+        private IMongoCollection<BeerEstablishment> ConnectToVenuesCollection()
+        {
+            var database = _connectionFactory.ConnectToDatabase();
+            return database.GetCollection<BeerEstablishment>("Venues");
+        }
+
+        private static async Task RefreshEstablishmentData(IMongoCollection<BeerEstablishment> collection, BeerEstablishment[] establishments)
+        {
             await collection.DeleteManyAsync(Builders<BeerEstablishment>.Filter.Empty);
             await collection.InsertManyAsync(establishments);
+        }
 
+        private static async Task CreateGeospatialIndex(IMongoCollection<BeerEstablishment> collection)
+        {
             var indexKey = Builders<BeerEstablishment>.IndexKeys.Geo2DSphere("Location.Coordinates");
             await collection.Indexes.CreateOneAsync(new CreateIndexModel<BeerEstablishment>(indexKey));
         }

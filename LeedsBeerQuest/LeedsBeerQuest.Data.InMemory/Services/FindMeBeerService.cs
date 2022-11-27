@@ -20,24 +20,21 @@ namespace LeedsBeerQuest.App.Services
 
         public Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
         {
-            var establishments = _cache.Get<BeerEstablishment[]>("establishments");
-            BeerEstablishment? establishment = null;
-            if (establishments != null)
-            {
-                establishment = establishments.FirstOrDefault(e => e.Name == establishmentName);
-            }
+            var establishments = GetEstablishmentsFromCache();
+            var establishment = establishments?.FirstOrDefault(e => e.Name == establishmentName);
 
             return Task.FromResult(establishment);
         }
 
         public Task<BeerEstablishmentLocation[]> GetNearestBeerLocations(Location? myLocation = null)
         {
-            var establishments = _cache.Get<BeerEstablishment[]>("establishments");
+            var establishments = GetEstablishmentsFromCache();
             var nearestLocations = Array.Empty<BeerEstablishmentLocation>();
             if (establishments != null)
             {
-                var locations = CreateLocationModel(myLocation, establishments!);
-                nearestLocations = locations
+                var startLocation = myLocation ?? _settings.DefaultSearchLocation!;
+                nearestLocations = establishments
+                    .Select(e => ConvertToLocationModel(e, startLocation))
                     .OrderBy(l => l.DistanceInMetres)
                     .Take(_settings.DefaultPageSize)
                     .ToArray();
@@ -46,16 +43,19 @@ namespace LeedsBeerQuest.App.Services
             return Task.FromResult(nearestLocations);
         }
 
-        private IEnumerable<BeerEstablishmentLocation> CreateLocationModel(Location? myLocation, BeerEstablishment[] establishments)
+        private BeerEstablishmentLocation ConvertToLocationModel(BeerEstablishment establishment, Location startLocation)
         {
-            var startLocation = myLocation ?? _settings.DefaultSearchLocation!;
-            var locations = establishments.Select(e => new BeerEstablishmentLocation()
+            return new BeerEstablishmentLocation()
             {
-                Name = e.Name,
-                Location = e.Location,
-                DistanceInMetres = _distanceCalculator.CalculateDistanceInMetres(startLocation, e.Location!)
-            });
-            return locations;
+                Name = establishment.Name,
+                Location = establishment.Location,
+                DistanceInMetres = _distanceCalculator.CalculateDistanceInMetres(startLocation, establishment.Location!)
+            };
+        }
+
+        private BeerEstablishment[]? GetEstablishmentsFromCache()
+        {
+            return _cache.Get<BeerEstablishment[]>("establishments");
         }
     }
 }
