@@ -13,11 +13,12 @@ Usage
 There are two ways of using the app - firstly, there is a fully hosted solution available at:
 
 UI - [https://purple-stone-0a63fe503.2.azurestaticapps.net/](https://purple-stone-0a63fe503.2.azurestaticapps.net/)
+
 API - [https://leedsbeerquestapi.azurewebsites.net/swagger/index.html](https://leedsbeerquestapi.azurewebsites.net/swagger/index.html)
 
 This is currently set up to use the MongoDb data store, and therefore should be ready to go. 
 
-Secondly, the app can be started by cloning the repo, and building and running the app via the standard methods - during development, I ran the api through visual studio and the angular app by 'ng serve --open' through a terminal. On first use, particularly if using the in-memory data cache (see below), it may be necessary to import the data from the Data Mill North website. This can be done via the data management endpoint accessible through the API's Swagger (or by hitting PATCH /data-management/import directly). This will download the data, convert it to a series of model objects and import it into the data store. 
+Secondly, the app can be started by cloning the repo, and building and running the app via the standard methods - during development, I ran the api through visual studio and the angular app by 'ng serve --open' through a terminal (note, however, that the angular app points to the Azure-hosted API, and the [service class](https://github.com/ChrisClark303/leeds-beer-quest/blob/main/LeedsBeerQuest/LeedsBeerQuest.Web/leeds-beer-quest/src/app/beer-quest.service.ts) will need to be changed to point to a local instance) On first use, particularly if using the in-memory data cache (see below), it may be necessary to import the data from the Data Mill North website. This can be done via the data management endpoint accessible through the API's Swagger (or by hitting PATCH /data-management/import directly). This will download the data, convert it to a series of model objects and import it into the data store. 
 
 Once the data is populated, it is available to be queried: firstly, the /beer/nearest-establishments route will return the nearest 20 venues from Joseph's Well; optionally, lat and long coordinates can be supplied via the query string to shift the start location (eg, /beer/nearest-establishments?lat=53.794829&lng=-1.547601).
 Secondly, the full details for a particular venue can be retrieved by specifying it by name, eg: /Beer/The%20White%20Rose. 
