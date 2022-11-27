@@ -76,5 +76,5 @@ The UI is very rudimentary, the styling is taken from the defaults provided by A
 
 Exception handling is unsophisticated, as is logging. Exceptions are left to bubble up to the controller, as the entry point to the app. At this point there are handled and logged, and a 500 is returned to the caller. In larger applications, greater visibility is warranted and therefore logging would be more comprehensive. 
 
-Functionality is very light - there are no options for filtering, or even selecting the next page. In addition, closed venues are not filtered out from search results, so anyone using the app could well be disappointed!
+As already mentioned, functionality is very light - there are no options for filtering, or even selecting the next page. In addition, closed venues are not filtered out from search results, so anyone using the app could well be disappointed!
 
