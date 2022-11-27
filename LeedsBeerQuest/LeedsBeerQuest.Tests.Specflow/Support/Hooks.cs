@@ -1,6 +1,7 @@
 ﻿using BoDi;
 using LeedsBeerQuest.Api;
 using LeedsBeerQuest.App;
+using LeedsBeerQuest.App.Settings;
 using LeedsBeerQuest.Tests.Specflow.Drivers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -39,6 +40,7 @@ namespace LeedsBeerQuest.Tests.Specflow.Support
                 {
                     builder.ConfigureTestServices(services =>
                     {
+                        services.Configure<FindMeBeerServiceSettings>(s => s.DefaultPageSize = 10);
                         services.AddHttpClient<DataImporter>(client =>
                         {
                             client.BaseAddress = new Uri("http://localhost/test");
