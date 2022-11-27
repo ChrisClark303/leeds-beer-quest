@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LeedsBeerQuest.Api.Controllers
 {
     [ApiController]
-    [Route("Beer")]
+    [Route("beer")]
     [Tags("Find Me Beer!")]
     public class FindMeBeerController : ControllerBase
     {
