@@ -4,11 +4,11 @@ Coding challenge to find places to drink beer. In Leeds.
 ## Introduction
 
 This is a dotnet 7 application hosting an aspnetcore webapi, with an angular front-end. In addition, there is a MongoDB data provider for storage. The API and front-end are stored in Azure, and can be found [here](https://leedsbeerquestapi.azurewebsites.net/swagger/index.html) and [here](https://purple-stone-0a63fe503.2.azurestaticapps.net/) respectively. 
-There is a basic deployment pipeline setup in [github actions](https://github.com/ChrisClark303/leeds-beer-quest/actions), so that, when changed are PR'd into Main, an automatic deployment is triggered and the latest version is pushed out. This is very basic as it stands - I let the setup process generate the yml for me and I've not made any further changes (apart from to disable the API management aspect, as I couldn't quite get it to work).  
+There is a basic deployment pipeline setup in [github actions](https://github.com/ChrisClark303/leeds-beer-quest/actions), so that, when changes are PR'd into Main, an automatic deployment is triggered and the latest version is pushed out. This is very basic as it stands - I let the setup process generate the yml for me and I've not made any further changes (apart from to disable the API management aspect, as I couldn't quite get it to work).  
 
 ## Project structure
 
-The entire app is broken into two; an angular front-end (Angular is the front-end technology I'm most familiar with) and a dotnet 7 API. The angular code can be found [here](https://github.com/ChrisClark303/leeds-beer-quest/tree/main/LeedsBeerQuest/LeedsBeerQuest.Web/leeds-beer-quest) and the API code is [here](https://github.com/ChrisClark303/leeds-beer-quest/tree/main/LeedsBeerQuest).
+The application is composed of two main components: an angular front-end (Angular is the front-end technology I'm most familiar with) and a dotnet 7 API. The angular code can be found [here](https://github.com/ChrisClark303/leeds-beer-quest/tree/main/LeedsBeerQuest/LeedsBeerQuest.Web/leeds-beer-quest) and the API code is [here](https://github.com/ChrisClark303/leeds-beer-quest/tree/main/LeedsBeerQuest).
 
 The API contains 5 projects:
 
@@ -35,7 +35,7 @@ The API provides three separate pieces of functionality; firstly, it allows cons
 The last piece of functionality it provides is a data management endpoint so that the establishments can be imported from the LeedsBeerQuest website. This fetches the CSV, parses the data into models, and then passes these on to a service object to be inserted into the relevant data store. Two data stores are currently supported - an in-memory object cache, and MongoDB. There is a "feature flag" - actually just a bool set in appsettings - that switches between these two. This simply instructs the DI registry to register one set of implementations over another.
 
 ## Models
-I've used separate Read and Write models, but I've cheated here by only splitting those out there's actually a difference between the two. Essentially, the Location object has to include a Coordinates array when written to Mongo to support the GeoSpatial index. This is not required on the read model so the parser object that builds the model uses the write version, while everything else defaults to the read. 
+I've used separate Read and Write models, but I've cheated here by only splitting those out there's actually a difference between the two. Essentially, the Location object has to include a Coordinates array when written to Mongo to support the GeoSpatial index. This is not required on the read model so the parser object that builds the model for the datastore uses the write version, while everything else defaults to the read. 
 
 ### MongoDB
 I decided on MongoDB for a few reasons - firstly, I wanted something permanent, as the in-memory cache used initially had to be filled everytime the app was restarted (this is why the specflow tests call the DataImport route in test setup). Secondly, I knew it supported geospatial querying, so would be able to provide the nearest establishments and distance calculations out of the box, and thirdly, MongoDB provides free cloud storage!
@@ -49,4 +49,12 @@ There are integration tests, written in Specflow (again with Nunit and Moq); the
 
 ## Limitations
 
-There are a number of aspects that could be improved; firstly, there is no separate test/stage/prod environments setup in Azure, or the deployment pipeline. This means that there is no way to test code apart from on the local machine or in prod! Ideally I would want a test environment and the ability to deploy to it from a feature branch at will. However, I figured this was beyond the scope of this piece of work, but I would like to highlight that I wouldn't normally want to work like that! 
+There are a number of aspects that could be improved; firstly, there is no separate test/stage/prod environments setup in Azure, or the deployment pipeline. This means that there is no way to test code apart from on the local machine or in prod. Ideally I would want a test environment and the ability to deploy to it from a feature branch at will. However, I figured this was beyond the scope of this piece of work, but I would like to highlight that I wouldn't normally want to work like that! 
+On a related note, it isn't possible to inject config - such as the MongoDB connection string or the API url used in the UI - on a per-environment basis via the CI/CD pipeline. This would limit the usefulness of having separate test/stage/prod environments.
+
+The UI is very rudimentary, the styling is taken from the defaults provided by Angular when first creating an application using ng new. There has been no mobile optimization, and so I am certain it will not adapt well is this regard.
+
+Exception handling is unsophisticated, as is logging. Exceptions are left to bubble up to the controller, as the entry point to the app. At this point there are handled and logged, and a 500 is returned to the caller. In larger applications, greater visibility is warranted and therefore logging would be more comprehensive. 
+
+Functionality is very light - there are no options for filtering, or even selecting the next page. In addition, closed venues are not filtered out from search results, so anyone using the app could well be disappointed!
+
