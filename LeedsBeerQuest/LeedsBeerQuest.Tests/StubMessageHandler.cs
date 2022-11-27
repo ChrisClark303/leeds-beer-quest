@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LeedsBeerQuest.Tests
 {
-    public class StubMessageHandler : HttpMessageHandler
+    public class StubMessageHandler : DelegatingHandler
     {
         private HttpResponseMessage? _response;
         private readonly List<HttpRequestMessage> _messages = new List<HttpRequestMessage>();
@@ -22,6 +22,19 @@ namespace LeedsBeerQuest.Tests
 
         public static StubMessageHandler WithResponse(HttpResponseMessage response)
         {
+            return new StubMessageHandler()
+            {
+                _response = response
+            };
+        }
+
+        public static StubMessageHandler WithStringContent(string content)
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(content)
+            };
+
             return new StubMessageHandler()
             {
                 _response = response

@@ -18,6 +18,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LeedsBeerQuest.Api\LeedsBeerQuest.Api.csproj" />
+    <ProjectReference Include="..\LeedsBeerQuest.Data.InMemory\LeedsBeerQuest.App.csproj" />
+    <ProjectReference Include="..\LeedsBeerQuest.Tests\LeedsBeerQuest.Tests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\leedsbeerquest.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

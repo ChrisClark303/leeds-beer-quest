@@ -1,9 +1,12 @@
 ﻿using BoDi;
+using LeedsBeerQuest.Api;
+using LeedsBeerQuest.App;
 using LeedsBeerQuest.Tests.Specflow.Drivers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +37,16 @@ namespace LeedsBeerQuest.Tests.Specflow.Support
             new WebApplicationFactory<Program>()
                 .WithWebHostBuilder(builder =>
                 {
-                    //TODO : config overrides here
+                    builder.ConfigureTestServices(services =>
+                    {
+                        services.AddHttpClient<DataImporter>(client =>
+                        {
+                            client.BaseAddress = new Uri("http://localhost/test");
+                        })
+                        //This prevents the test from constantly downloading the CSV file from
+                        //data mill north.
+                        .AddHttpMessageHandler(() => StubMessageHandlerFactory.Create());
+                    });
                 });
     }
 }
