@@ -12,15 +12,15 @@ namespace LeedsBeerQuest.Tests.App
         //        Output: Distance is: 2.0043678382716137 Kilometers / 1.609344
 
         [Test]
-        public void CalculateDistanceInMiles_CorrectlyCalculatesDistanceBetweenTwoLocations()
+        public void CalculateDistanceInMetres_CorrectlyCalculatesDistanceBetweenTwoLocations()
         {
             var location1 = new Location() { Lat = 53.32055555555556, Long = -1.7297222222222221 };
             var location2 = new Location() { Lat = 53.31861111111111, Long = -1.6997222222222223 };
 
             var distanceCalculator = new LocationDistanceCalculator();
-            var distance = distanceCalculator.CalculateDistanceInMiles(location1, location2);
+            var distance = distanceCalculator.CalculateDistanceInMetres(location1, location2);
 
-            Assert.That(distance, Is.EqualTo(1.2446));
+            Assert.That(distance, Is.EqualTo(2004));
         }
     }
 }

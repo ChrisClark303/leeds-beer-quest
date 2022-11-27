@@ -43,7 +43,7 @@ export class BeerMapComponent implements OnInit {
       result.forEach((bl, i) => 
         {
           console.log(JSON.stringify({ bl }) );
-          this.addMarkerToMap(bl.name, bl.location.lat, bl.location.long, `${i}: ${bl.name} (${bl.distance} mls)`);
+          this.addMarkerToMap(bl.name, bl.location.lat, bl.location.long, `${i}: ${bl.name} (${bl.distanceInMetres}m)`);
         })
     });
   }
@@ -66,11 +66,6 @@ export class BeerMapComponent implements OnInit {
 
   showMarkerInformation(marker: MapMarker, content:any) {
     console.log("Content: " + content);
-    // this.beerQuestService.getEstablishmentDetailsByName(content)
-    // .subscribe(result => {
-    //   this.selectedEstablishment = result;
-    //   console.log("establishment: " + result.name)
-    // });
     this.establishmentSelected.emit(content);
     this.infoContent = content;
     this.info.open(marker);

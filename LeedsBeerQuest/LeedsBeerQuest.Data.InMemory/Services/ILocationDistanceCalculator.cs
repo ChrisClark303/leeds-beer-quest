@@ -4,6 +4,6 @@ namespace LeedsBeerQuest.App.Services
 {
     public interface ILocationDistanceCalculator
     {
-        double CalculateDistanceInMiles(Location startLocation, Location targetLocation);
+        double CalculateDistanceInMetres(Location startLocation, Location targetLocation);
     }
 }

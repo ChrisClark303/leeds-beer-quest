@@ -8,8 +8,10 @@ namespace LeedsBeerQuest.App.Services
     public class LocationDistanceCalculator : ILocationDistanceCalculator
     {
         private const int _radiusOfEarthInMiles = 3956;
+        private const int _radiusOfEarthInKm = 6371;
+        private const double _milesToMetres = 1609.344;
 
-        public double CalculateDistanceInMiles(Location startLocation, Location targetLocation)
+        public double CalculateDistanceInMetres(Location startLocation, Location targetLocation)
         {
             // The math module contains
             // a function named toRadians
@@ -30,7 +32,8 @@ namespace LeedsBeerQuest.App.Services
 
             double c = 2 * Math.Asin(Math.Sqrt(a));
 
-            return Math.Round(c * _radiusOfEarthInMiles, 4);
+            var distanceInMetres = c * _radiusOfEarthInKm * 1000;
+            return Math.Round(distanceInMetres);
         }
 
         static double toRadians(double angleIn10thofaDegree)

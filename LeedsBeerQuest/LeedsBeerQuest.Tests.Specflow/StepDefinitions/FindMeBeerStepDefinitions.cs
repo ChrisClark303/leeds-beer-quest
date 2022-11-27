@@ -58,7 +58,7 @@ namespace LeedsBeerQuest.Tests.Specflow.StepDefinitions
                 Assert.AreEqual(row["Name"], establishment.Name);
                 Assert.AreEqual(Double.Parse(row["Lat"]), establishment.Location?.Lat);
                 Assert.AreEqual(Double.Parse(row["Lon"]), establishment.Location?.Long);
-                Assert.AreEqual(Double.Parse(row["Distance"]), establishment.Distance, 0.001);
+                Assert.AreEqual(Int32.Parse(row["Distance"]), Math.Round(establishment.DistanceInMetres, 0), 1);
             }
         }
 
