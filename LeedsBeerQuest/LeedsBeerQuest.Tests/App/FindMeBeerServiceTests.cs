@@ -15,13 +15,6 @@ namespace LeedsBeerQuest.Tests.App
 {
     internal class FindMeBeerServiceTests
     {
-        private FindMeBeerService CreateService(IMemoryCache? memCache = null, ILocationDistanceCalculator? distanceCalc = null, int pageSize = 5, Location? defaultSearchLocation = null)
-        {
-            return new FindMeBeerService(memCache ?? new MemoryCache(new MemoryCacheOptions()),
-                distanceCalc ?? new Mock<ILocationDistanceCalculator>().Object,
-                Options.Create(new FindMeBeerServiceSettings() { DefaultPageSize = pageSize, DefaultSearchLocation = defaultSearchLocation }));
-        }
-
         [Test]
         public async Task GetNearestBeerLocations_CacheReturnsNull_ReturnsEmptyArray()
         {
@@ -161,6 +154,13 @@ namespace LeedsBeerQuest.Tests.App
             var establishment = await findMeBeer.GetBeerEstablishmentByName("establishment4");
 
             Assert.That(establishment, Is.Null);
+        }
+
+        private FindMeBeerService CreateService(IMemoryCache? memCache = null, ILocationDistanceCalculator? distanceCalc = null, int pageSize = 5, Location? defaultSearchLocation = null)
+        {
+            return new FindMeBeerService(memCache ?? new MemoryCache(new MemoryCacheOptions()),
+                distanceCalc ?? new Mock<ILocationDistanceCalculator>().Object,
+                Options.Create(new FindMeBeerServiceSettings() { DefaultPageSize = pageSize, DefaultSearchLocation = defaultSearchLocation }));
         }
     }
 }

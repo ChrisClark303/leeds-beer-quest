@@ -38,7 +38,6 @@ namespace LeedsBeerQuest.Api.Controllers
 
         private static Location? CreateLocationModel(double? lat, double? lng)
         {
-            //TODO : Should this be in the service?
             Location? location = null;
             if (lat != null && lng != null)
             {

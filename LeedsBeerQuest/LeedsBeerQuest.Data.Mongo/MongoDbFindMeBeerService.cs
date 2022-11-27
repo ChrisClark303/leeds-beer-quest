@@ -28,12 +28,12 @@ namespace LeedsBeerQuest.Data.Mongo
 
         public async Task<BeerEstablishment?> GetBeerEstablishmentByName(string establishmentName)
         {
-            //TODO: Not massively happy about having to use document[0] and [1]
             var documents = _queryBuilder
                 .WithIsEqualToQuery("Name", establishmentName)
                 .WithProjection(new[] { "Location._t", "Location.Coordinates", "_id" }, ProjectionType.Exclude)
                 .Build();
 
+            //Documents are built in the order they are specified, so should be accessed in the same order
             var filter = documents[0];
             var projection = documents[1];
 
