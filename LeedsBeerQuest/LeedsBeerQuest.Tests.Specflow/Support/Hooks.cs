@@ -2,6 +2,7 @@
 using LeedsBeerQuest.Api;
 using LeedsBeerQuest.App;
 using LeedsBeerQuest.App.Settings;
+using LeedsBeerQuest.Data.Mongo;
 using LeedsBeerQuest.Tests.Specflow.Drivers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -40,14 +41,16 @@ namespace LeedsBeerQuest.Tests.Specflow.Support
                 {
                     builder.ConfigureTestServices(services =>
                     {
-                        services.Configure<FindMeBeerServiceSettings>(s => s.DefaultPageSize = 10);
-                        services.AddHttpClient<DataImporter>(client =>
-                        {
-                            client.BaseAddress = new Uri("http://localhost/test");
-                        })
-                        //This prevents the test from constantly downloading the CSV file from
-                        //data mill north.
-                        .AddHttpMessageHandler(() => StubMessageHandlerFactory.Create());
+                        services
+                            .Configure<MongoDbSettings>(s => s.DatabaseName = "LeedsBeerQuest-Test")
+                            .Configure<FindMeBeerServiceSettings>(s => s.DefaultPageSize = 10)
+                            .AddHttpClient<DataImporter>(client =>
+                            {
+                                client.BaseAddress = new Uri("http://localhost/test");
+                            })
+                            //This prevents the test from constantly downloading the CSV file from
+                            //data mill north.
+                            .AddHttpMessageHandler(() => StubMessageHandlerFactory.Create());
                     });
                 });
     }
