@@ -67,6 +67,11 @@ I used Specflow to perform end-to-end API testing. This spins up an instance of 
 ### MongoDB
 I decided on MongoDB for a few reasons - firstly, I wanted something permanent, as the in-memory cache used initially had to be filled everytime the app was restarted (this is why the specflow tests call the DataImport route in test setup). Secondly, I knew it supported geospatial querying, so would be able to provide the nearest establishments and distance calculations out of the box, and thirdly, MongoDB provides free cloud storage!
 On the downside, it's definitely the most complex part of the app; the mongo querying syntax is not particular user-friendly, and so I've hidden most of that inside a query builder object. MongoDB has a dotnet driver that supplies a series of static builder objects to generate query objects, but to be honest these are no less idiosyncratic and are almost entirely impossible to test, so I instead generated the queries using BsonDocuments, which can be subject to unit testing. 
+While I can't easily share my mongo cloud credentials, it is possible to connect to the database using mongoshell, with the following connection details: 
+
+mongosh "mongodb+srv://cluster0.qcexvsj.mongodb.net/LeedsBeerQuest-Test" --apiVersion 1 --username leeds-beer-quest --password 6RtzbtTDzdd6SjP
+
+This connects to the test database.
 
 ## Testing
 
