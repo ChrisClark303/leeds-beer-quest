@@ -41,7 +41,6 @@ export class BeerMapComponent implements OnInit {
     .subscribe(result => {
       result.forEach((bl, i) => 
         {
-          console.log(JSON.stringify({ bl }) );
           this.addMarkerToMap(`${bl.name} - ${Math.round(bl.distanceInMetres)}m from you`, bl.name, bl.location.lat, bl.location.long, `${i + 1}`);
         })
     });
@@ -64,7 +63,6 @@ export class BeerMapComponent implements OnInit {
   }
 
   showMarkerInformation(marker: MapMarker, title:any, content:any) {
-    console.log("Content: " + content);
     this.establishmentSelected.emit(content);
     this.infoContent = title;
     this.info.open(marker);

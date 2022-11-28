@@ -21,8 +21,6 @@ export class FindMeBeerComponent implements OnInit {
         this.beerQuestService.getEstablishmentDetailsByName(establishmentName)
           .subscribe(result => {
             this.selectedEstablishment = result;
-            console.log("establishment: " + result.name)
-            console.log("tags: " + JSON.stringify(result.tags))
         });
   }
 
