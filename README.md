@@ -3,10 +3,16 @@ Coding challenge to find places to drink beer. In Leeds.
 
 ## Introduction
 
-This is a dotnet 7 application hosting an aspnetcore webapi, with an angular front-end. In addition, there is a MongoDB data provider for storage. The API and front-end are stored in Azure, and can be found [here](https://leedsbeerquestapi.azurewebsites.net/swagger/index.html) and [here](https://purple-stone-0a63fe503.2.azurestaticapps.net/) respectively. The MongoDb collection is stored in cloud.mongodb.com. It's stored in my personal account, but there is an application user - specified in the connection string - that can be used to connect and explore the collection. 
+This is a dotnet 7 application hosting an aspnetcore webapi, with an angular front-end. In addition, there is a MongoDB data provider for storage. The API and front-end are hosted in Azure, and can be found [here](https://leedsbeerquestapi.azurewebsites.net/swagger/index.html) and [here](https://purple-stone-0a63fe503.2.azurestaticapps.net/) respectively. The MongoDb collection is stored in cloud.mongodb.com. It's stored in my personal account, but there is an application user - specified in the connection string - that can be used to connect and explore the collection. 
 There is a basic deployment pipeline setup in [github actions](https://github.com/ChrisClark303/leeds-beer-quest/actions), so that, when changes are PR'd into Main, an automatic deployment is triggered and the latest version is pushed out. This is very basic as it stands - I let the setup process generate the yml for me and I've not made any further changes (apart from to disable the API management aspect).  
 
+## Functionality
+
 At present, the app is very light on functionality - it only really has 3 functions. I am aware that the second stage of the process is to extend the app, so I focused instead on getting the elements of an end-to-end solution in place, and writing a decent level of testing. Hopefully the work put in so far makes the work of extending the application reasonably straightforward. 
+
+The API provides three separate pieces of functionality; firstly, it allows consumers to find a list of places to drink beer in ascending distance from a specified location. If a location is not supplied, it uses a default set in config (currently set to the location of Joseph's Well). This returns a set of objects containing name, coordinates, and distance, so they can be plotted on a map. Next, it provides a route to request all details for a given establishment by name. These two routes are used by the UI, which, on-load, requests the nearest establishments and plots them on a map; when a user selected one it then requests the details and prints them out below the map.
+
+The last piece of functionality it provides is a data management endpoint so that the establishments can be imported from the LeedsBeerQuest website. This fetches the CSV, parses the data into models, and then passes these on to a service object to be inserted into the relevant data store. Two data stores are currently supported - an in-memory object cache, and MongoDB. There is a "feature flag" - actually just a bool set in appsettings - that switches between these two. This simply instructs the DI registry to register one set of implementations over another.
 
 ### Usage
 
@@ -38,6 +44,9 @@ This holds code that hosts the application logic and is the entry point for the 
 ### LeedsBeerQuest.App
 This class library holds models, interface definitions for application logic, and default implementations of those interfaces. The initial cut of the application used an in-memory data store (implemented by MemoryCache) and so was useful for starting to build the UI; that in-memory implementation of the service layer is stored in this assembly.
 
+#### Models
+I've used separate Read and Write models, but I've cheated here by only splitting those out there's actually a difference between the two. Essentially, the Location object has to include a Coordinates array when written to Mongo to support the GeoSpatial index. This is not required on the read model so the parser object that builds the model for the datastore uses the write version, while everything else defaults to the read. 
+
 ### LeedsBeerQuest.Data.Mongo
 As a more permanent data store, I migrated to MongoDb. This involved providing Mongo-specific implementations of the various interfaces described above, which are defined in this project. Arguably this is the most complex piece of the application.
 
@@ -46,15 +55,6 @@ Unit tests for the above. Rather than having a test project per class library, I
 
 ### LeedsBeerQuest.Tests.Specflow
 I used Specflow to perform end-to-end API testing. This spins up an instance of the LeedsBeerQuest.Api service and allows the tests to interact with it via a HttpClient. Currently this is setup to be completely end-to-end - the data stores are not stubbed and so the tests will interact with MongoDb. The one exception here is that the CSV download from Data Mill North is stubbed.
-
-## Functionality
-
-The API provides three separate pieces of functionality; firstly, it allows consumers to find a list of places to drink beer in ascending distance from a specified location. If a location is not supplied, it uses a default set in config (currently set to the location of Joseph's Well). This returns a set of objects containing name, coordinates, and distance, so they can be plotted on a map. Next, it provides a route to request all details for a given establishment by name. These two routes are used by the UI, which, on-load, requests the nearest establishments and plots them on a map; when a user selected one it then requests the details and prints them out below the map.
-
-The last piece of functionality it provides is a data management endpoint so that the establishments can be imported from the LeedsBeerQuest website. This fetches the CSV, parses the data into models, and then passes these on to a service object to be inserted into the relevant data store. Two data stores are currently supported - an in-memory object cache, and MongoDB. There is a "feature flag" - actually just a bool set in appsettings - that switches between these two. This simply instructs the DI registry to register one set of implementations over another.
-
-## Models
-I've used separate Read and Write models, but I've cheated here by only splitting those out there's actually a difference between the two. Essentially, the Location object has to include a Coordinates array when written to Mongo to support the GeoSpatial index. This is not required on the read model so the parser object that builds the model for the datastore uses the write version, while everything else defaults to the read. 
 
 ### MongoDB
 I decided on MongoDB for a few reasons - firstly, I wanted something permanent, as the in-memory cache used initially had to be filled everytime the app was restarted (this is why the specflow tests call the DataImport route in test setup). Secondly, I knew it supported geospatial querying, so would be able to provide the nearest establishments and distance calculations out of the box, and thirdly, MongoDB provides free cloud storage!
@@ -76,6 +76,8 @@ On a related note, it isn't possible to inject config - such as the MongoDB conn
 The UI is very rudimentary, the styling is taken from the defaults provided by Angular when first creating an application using ng new. There has been no mobile optimization, and so I am certain it will not adapt well is this regard.
 
 Exception handling is unsophisticated, as is logging. Exceptions are left to bubble up to the controller, as the entry point to the app. At this point there are handled and logged, and a 500 is returned to the caller. In larger applications, greater visibility is warranted and therefore logging would be more comprehensive. 
+
+I used the establishment name as a kind of natural identifier when fetching the details for an individual establishment, but ideally an ID should be generated and used in that route, due to the risk of non-URL-safe characters appearing in the name. In practice, it seems that both Swagger and Angular deal with this acceptably, even for names with accents and apostrophes etc, but there does seem to be an issue with "Golf" Cafe Bar, due to the quotes around Golf (in actual fact, there is a bug in the parser that builds the models here, too, which prevents the name from being correctly generate).
 
 As already mentioned, functionality is very light - there are no options for filtering, or even selecting the next page. In addition, closed venues are not filtered out from search results, so anyone using the app could well be disappointed!
 
