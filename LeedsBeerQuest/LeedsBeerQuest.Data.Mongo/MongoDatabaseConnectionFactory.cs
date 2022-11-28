@@ -25,7 +25,7 @@ namespace LeedsBeerQuest.Data.Mongo
             var settings = MongoClientSettings.FromConnectionString(_settings.ConnectionString);
             settings.ServerApi = new ServerApi(ServerApiVersion.V1);
             var client = new MongoClient(settings);
-            return client.GetDatabase("LeedsBeerQuest"); //TODO : Name of DB should be in config
+            return client.GetDatabase(_settings.DatabaseName);
         }
     }
 }
