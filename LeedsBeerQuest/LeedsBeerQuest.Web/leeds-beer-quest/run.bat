@@ -1,1 +1,2 @@
-ng serve --open
+CALL npm install
+CALL ng serve --open
