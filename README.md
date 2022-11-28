@@ -72,6 +72,7 @@ I used the tests extensively during refactoring to ensure that I hadn't broken a
 
 There are a number of aspects that could be improved; firstly, there is no separate test/stage/prod environments setup in Azure, or the deployment pipeline. This means that there is no way to test code apart from on the local machine or in prod. Ideally I would want a test environment and the ability to deploy to it from a feature branch at will. However, I figured this was beyond the scope of this piece of work, but I would like to highlight that I wouldn't normally want to work like that! 
 On a related note, it isn't possible to inject config - such as the MongoDB connection string or the API url used in the UI - on a per-environment basis via the CI/CD pipeline. This would limit the usefulness of having separate test/stage/prod environments.
+In addition, the connection string is stored in plain text, and should really use a secret specified in the deployment pipeline to inject this in at deployment time (also note that, to ensure that this application would work anywhere for review purposes, I have allowed access from any IP address in Mongo - normally I would white-list a specific set of IPs to ensure that, even if someone is able to find the username and password, they cannot use it indiscriminately).
 
 The UI is very rudimentary, the styling is taken from the defaults provided by Angular when first creating an application using ng new. There has been no mobile optimization, and so I am certain it will not adapt well is this regard.
 
